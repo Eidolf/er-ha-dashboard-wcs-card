@@ -68,6 +68,14 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     return this._config?.icon_size || '30px';
   }
 
+  get _max_items(): number {
+    return this._config?.max_items ?? 5;
+  }
+
+  get _next_only(): boolean {
+    return this._config?.next_only !== false;
+  }
+
   private _getDetectedWasteTypes(): string[] {
     if (!this.hass || !this._config) return [];
     const list = new Set<string>();
@@ -230,6 +238,17 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
           ></ha-textfield>
         </div>
 
+        <!-- Limit / Max Items -->
+        <div class="option">
+          <ha-textfield
+            label="${localize('editor.max_items', '', '', lang)}"
+            type="number"
+            .value="${String(this._max_items)}"
+            .configValue="${'max_items'}"
+            @input="${this._valueChanged}"
+          ></ha-textfield>
+        </div>
+
         <!-- Detected Waste Types Custom Style Editor -->
         ${detectedTypes.length > 0
           ? html`
@@ -287,6 +306,14 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
             <ha-switch
               .checked="${!!this._config?.hide_on_today}"
               .configValue="${'hide_on_today'}"
+              @change="${this._toggleChanged}"
+            ></ha-switch>
+          </ha-formfield>
+
+          <ha-formfield .label="${localize('editor.next_only', '', '', lang)}">
+            <ha-switch
+              .checked="${this._next_only}"
+              .configValue="${'next_only'}"
               @change="${this._toggleChanged}"
             ></ha-switch>
           </ha-formfield>

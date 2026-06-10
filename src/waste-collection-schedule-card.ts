@@ -94,6 +94,8 @@ export class WasteCollectionScheduleCard extends LitElement {
       due_color: '#f44336',
       due_1_color: '#ff9800',
       icon_color: 'var(--primary-text-color)',
+      next_only: true,
+      max_items: 5,
       ...config
     };
   }
@@ -317,7 +319,27 @@ export class WasteCollectionScheduleCard extends LitElement {
       }
     }
 
-    return list.sort((a, b) => a.daysTo - b.daysTo);
+    // Sort by days remaining
+    let sorted = list.sort((a, b) => a.daysTo - b.daysTo);
+
+    // If next_only is true, filter to show only the single nearest date per unique waste type name
+    if (this.config.next_only !== false) {
+      const seen = new Set<string>();
+      sorted = sorted.filter(item => {
+        const key = item.friendlyName.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    // Limit by max_items if defined and > 0
+    const maxItems = this.config.max_items ?? 5;
+    if (maxItems > 0) {
+      sorted = sorted.slice(0, maxItems);
+    }
+
+    return sorted;
   }
 
   private _acknowledge(item: WasteCollectionInfo): void {

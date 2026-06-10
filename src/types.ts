@@ -25,6 +25,8 @@ export interface WCSCardConfig {
   custom_colors?: Record<string, string>;
   custom_icons?: Record<string, string>;
   language?: string;
+  max_items?: number;
+  next_only?: boolean;
 }
 
 export interface HassEntityAttributeBase {

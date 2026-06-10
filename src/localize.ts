@@ -26,6 +26,8 @@ const languages: Record<string, Record<string, string>> = {
     'editor.due_1_color': 'Due Tomorrow Color (e.g., orange)',
     'editor.icon_color': 'Standard Icon Color (e.g., var(--primary-text-color))',
     'editor.invalid_json': 'Invalid JSON format',
+    'editor.max_items': 'Maximum items to display (Default: 5)',
+    'editor.next_only': 'Only show the next upcoming collection per waste type',
   },
   de: {
     'state.today': 'Heute',
@@ -54,6 +56,8 @@ const languages: Record<string, Record<string, string>> = {
     'editor.due_1_color': 'Farbe am Vortag (z.B. orange)',
     'editor.icon_color': 'Standard Icon-Farbe (z.B. var(--primary-text-color))',
     'editor.invalid_json': 'Ungültiges JSON-Format',
+    'editor.max_items': 'Maximale Anzahl an Terminen (Standard: 5)',
+    'editor.next_only': 'Nur den nächsten Termin pro Müllsorte anzeigen',
   }
 };
 
