@@ -207,14 +207,16 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
           <ha-select
             .value="${this._layout}"
             .configValue="${'layout'}"
+            .options="${[
+              { label: localize('editor.layout_card', '', '', lang), value: 'card' },
+              { label: localize('editor.layout_row', '', '', lang), value: 'row' },
+              { label: localize('editor.layout_grid', '', '', lang), value: 'grid' }
+            ]}"
             @selected="${this._valueChanged}"
             @change="${this._valueChanged}"
             @value-changed="${this._valueChanged}"
             @closed="${(ev: Event) => ev.stopPropagation()}"
           >
-            <ha-list-item value="card">${localize('editor.layout_card', '', '', lang)}</ha-list-item>
-            <ha-list-item value="row">${localize('editor.layout_row', '', '', lang)}</ha-list-item>
-            <ha-list-item value="grid">${localize('editor.layout_grid', '', '', lang)}</ha-list-item>
           </ha-select>
         </div>
 

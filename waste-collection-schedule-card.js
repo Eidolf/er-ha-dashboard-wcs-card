@@ -257,14 +257,12 @@ function e(e,t,i,s){var o,n=arguments.length,r=n<3?t:null===s?s=Object.getOwnPro
           <ha-select
             .value="${this._layout}"
             .configValue="${"layout"}"
+            .options="${[{label:me("editor.layout_card","","",e),value:"card"},{label:me("editor.layout_row","","",e),value:"row"},{label:me("editor.layout_grid","","",e),value:"grid"}]}"
             @selected="${this._valueChanged}"
             @change="${this._valueChanged}"
             @value-changed="${this._valueChanged}"
             @closed="${e=>e.stopPropagation()}"
           >
-            <ha-list-item value="card">${me("editor.layout_card","","",e)}</ha-list-item>
-            <ha-list-item value="row">${me("editor.layout_row","","",e)}</ha-list-item>
-            <ha-list-item value="grid">${me("editor.layout_grid","","",e)}</ha-list-item>
           </ha-select>
         </div>
 
