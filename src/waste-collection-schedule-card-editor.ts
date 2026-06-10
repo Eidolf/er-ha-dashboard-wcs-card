@@ -80,7 +80,15 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     if (this._config?.entities && Array.isArray(this._config.entities)) {
       list.push(...this._config.entities);
     }
-    return [...new Set(list)];
+    const unique: string[] = [];
+    for (const item of list) {
+      if (item === '') {
+        unique.push(item);
+      } else if (!unique.includes(item)) {
+        unique.push(item);
+      }
+    }
+    return unique;
   }
 
   private _getDetectedWasteTypes(): string[] {
@@ -196,8 +204,8 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
 
         <!-- Layout Style -->
         <div class="option">
+          <div class="section-title">${localize('editor.layout', '', '', lang)}</div>
           <ha-select
-            label="${localize('editor.layout', '', '', lang)}"
             .value="${this._layout}"
             .configValue="${'layout'}"
             @change="${this._valueChanged}"
@@ -428,11 +436,10 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
   }
 
   private _updateEntities(list: string[]): void {
-    const cleanList = list.filter(Boolean);
     this._config = {
       ...this._config,
       entity: undefined, // Clear legacy single entity key
-      entities: cleanList.length > 0 ? cleanList : undefined
+      entities: list.length > 0 ? list : undefined
     };
     this._fireConfigChanged();
   }
