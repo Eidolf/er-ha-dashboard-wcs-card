@@ -354,10 +354,53 @@ export class WasteCollectionScheduleCard extends LitElement {
   protected render(): TemplateResult | null {
     if (!this.hass) return null;
 
-    const parsedItems = this._parseEntities();
+    const entities = this._getEntities().filter(Boolean);
+    let parsedItems = this._parseEntities();
     const lang = this.config.language || this.hass.language || 'en';
 
-    const filteredItems = parsedItems.filter(item => {
+    const isPreview = entities.length === 0;
+    if (isPreview) {
+      parsedItems = [
+        {
+          entityId: 'stub.bio',
+          friendlyName: 'Biotonne',
+          daysTo: 0,
+          dateText: new Date().toLocaleDateString(lang),
+          types: ['Bio'],
+          icon: 'mdi:leaf',
+          color: '#4caf50',
+          isToday: true,
+          isTomorrow: false,
+          isAcknowledged: false,
+        },
+        {
+          entityId: 'stub.paper',
+          friendlyName: 'Altpapier',
+          daysTo: 1,
+          dateText: new Date(Date.now() + 86400000).toLocaleDateString(lang),
+          types: ['Papier'],
+          icon: 'mdi:package-variant',
+          color: '#2196f3',
+          isToday: false,
+          isTomorrow: true,
+          isAcknowledged: false,
+        },
+        {
+          entityId: 'stub.rest',
+          friendlyName: 'Restmüll',
+          daysTo: 5,
+          dateText: new Date(Date.now() + 5 * 86400000).toLocaleDateString(lang),
+          types: ['Restmüll'],
+          icon: 'mdi:trash-can',
+          color: '#707070',
+          isToday: false,
+          isTomorrow: false,
+          isAcknowledged: false,
+        }
+      ];
+    }
+
+    const filteredItems = isPreview ? parsedItems : parsedItems.filter(item => {
       if (item.isAcknowledged) return false;
       if (this.config.hide_on_today && item.isToday) return false;
       if (this.config.hide_before !== undefined && this.config.hide_before > -1) {

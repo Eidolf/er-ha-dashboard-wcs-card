@@ -177,8 +177,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
                 <ha-entity-picker
                   .hass="${this.hass}"
                   .value="${entityId}"
-                  .index="${index}"
-                  @value-changed="${this._entityChanged}"
+                  @value-changed="${(ev: any) => this._entityChanged(index, ev)}"
                   allow-custom-entity
                 ></ha-entity-picker>
                 <button class="delete-btn" @click="${() => this._removeEntity(index)}">
@@ -203,8 +202,8 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
         </div>
 
         <!-- Layout Style -->
+        <div class="section-title">${localize('editor.layout', '', '', lang)}</div>
         <div class="option">
-          <div class="section-title">${localize('editor.layout', '', '', lang)}</div>
           <ha-select
             .value="${this._layout}"
             .configValue="${'layout'}"
@@ -409,9 +408,8 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     this._fireConfigChanged();
   }
 
-  private _entityChanged(ev: any): void {
+  private _entityChanged(index: number, ev: any): void {
     if (!this._config) return;
-    const index = ev.target.index;
     const value = ev.detail.value;
 
     const list = [...this._entitiesList];
