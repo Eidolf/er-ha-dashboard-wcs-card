@@ -334,8 +334,8 @@ export class WasteCollectionScheduleCard extends LitElement {
     }
 
     // Limit by max_items if defined and > 0
-    const maxItems = this.config.max_items ?? 5;
-    if (maxItems > 0) {
+    const maxItems = Number(this.config.max_items ?? 5);
+    if (!isNaN(maxItems) && maxItems > 0) {
       sorted = sorted.slice(0, maxItems);
     }
 

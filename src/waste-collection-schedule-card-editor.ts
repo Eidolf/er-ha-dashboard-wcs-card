@@ -40,10 +40,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     this._config = config;
   }
 
-  get _entity(): string {
-    return this._config?.entity || '';
-  }
-
   get _title(): string {
     return this._config?.title || '';
   }
@@ -76,14 +72,21 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     return this._config?.next_only !== false;
   }
 
+  get _entitiesList(): string[] {
+    const list: string[] = [];
+    if (this._config?.entity) {
+      list.push(this._config.entity);
+    }
+    if (this._config?.entities && Array.isArray(this._config.entities)) {
+      list.push(...this._config.entities);
+    }
+    return [...new Set(list)];
+  }
+
   private _getDetectedWasteTypes(): string[] {
     if (!this.hass || !this._config) return [];
     const list = new Set<string>();
-    const entities: string[] = [];
-    if (this._config.entity) entities.push(this._config.entity);
-    if (this._config.entities && Array.isArray(this._config.entities)) {
-      entities.push(...this._config.entities);
-    }
+    const entities = this._entitiesList;
     
     for (const entityId of entities) {
       const stateObj = this.hass.states[entityId];
@@ -112,7 +115,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
 
   private _getWasteColor(type: string): string {
     const customColors = this._config?.custom_colors || {};
-    // Return custom color or fallback to standard color picker format (hex)
     if (customColors[type]) return customColors[type];
     
     const typeLower = type.toLowerCase();
@@ -154,29 +156,32 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
 
     const lang = this.hass.language || 'en';
     const detectedTypes = this._getDetectedWasteTypes();
+    const entities = this._entitiesList;
 
     return html`
       <div class="card-config">
-        <!-- Main Entity Selection -->
+        <!-- Multiple Entities Picker List -->
         <div class="option">
-          <ha-entity-picker
-            .label="${localize('editor.entity', '', '', lang)}"
-            .hass="${this.hass}"
-            .value="${this._entity}"
-            .configValue="${'entity'}"
-            @value-changed="${this._valueChanged}"
-            allow-custom-entity
-          ></ha-entity-picker>
-        </div>
-
-        <!-- Multiple Entities (Text input list) -->
-        <div class="option">
-          <ha-textfield
-            label="Zusätzliche Entitäten (Kommagetrennt für mehrere)"
-            .value="${this._config?.entities ? this._config.entities.join(', ') : ''}"
-            .configValue="${'entities'}"
-            @input="${this._entitiesChanged}"
-          ></ha-textfield>
+          <div class="section-title">Müllsensoren (Entitäten)</div>
+          <div class="entities-list">
+            ${entities.map((entityId, index) => html`
+              <div class="entity-row">
+                <ha-entity-picker
+                  .hass="${this.hass}"
+                  .value="${entityId}"
+                  .index="${index}"
+                  @value-changed="${this._entityChanged}"
+                  allow-custom-entity
+                ></ha-entity-picker>
+                <button class="delete-btn" @click="${() => this._removeEntity(index)}">
+                  <ha-icon icon="mdi:delete"></ha-icon>
+                </button>
+              </div>
+            `)}
+          </div>
+          <button class="add-btn" @click="${this._addEntity}">
+            <ha-icon icon="mdi:plus"></ha-icon> Sensor hinzufügen
+          </button>
         </div>
 
         <!-- Card Title -->
@@ -195,13 +200,35 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
             label="${localize('editor.layout', '', '', lang)}"
             .value="${this._layout}"
             .configValue="${'layout'}"
-            @selected="${this._valueChanged}"
+            @change="${this._valueChanged}"
             @closed="${(ev: Event) => ev.stopPropagation()}"
           >
             <mwc-list-item value="card">${localize('editor.layout_card', '', '', lang)}</mwc-list-item>
             <mwc-list-item value="row">${localize('editor.layout_row', '', '', lang)}</mwc-list-item>
             <mwc-list-item value="grid">${localize('editor.layout_grid', '', '', lang)}</mwc-list-item>
           </ha-select>
+        </div>
+
+        <!-- Limit / Max Items -->
+        <div class="option">
+          <ha-textfield
+            label="${localize('editor.max_items', '', '', lang)}"
+            type="number"
+            .value="${String(this._max_items)}"
+            .configValue="${'max_items'}"
+            @input="${this._valueChanged}"
+          ></ha-textfield>
+        </div>
+
+        <!-- Threshold to Hide -->
+        <div class="option">
+          <ha-textfield
+            label="${localize('editor.hide_before', '', '', lang)}"
+            type="number"
+            .value="${String(this._hide_before)}"
+            .configValue="${'hide_before'}"
+            @input="${this._valueChanged}"
+          ></ha-textfield>
         </div>
 
         <!-- Style customization headers -->
@@ -238,17 +265,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
           ></ha-textfield>
         </div>
 
-        <!-- Limit / Max Items -->
-        <div class="option">
-          <ha-textfield
-            label="${localize('editor.max_items', '', '', lang)}"
-            type="number"
-            .value="${String(this._max_items)}"
-            .configValue="${'max_items'}"
-            @input="${this._valueChanged}"
-          ></ha-textfield>
-        </div>
-
         <!-- Detected Waste Types Custom Style Editor -->
         ${detectedTypes.length > 0
           ? html`
@@ -264,9 +280,10 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
         <div class="toggles">
           <ha-formfield .label="${localize('editor.hide_title', '', '', lang)}">
             <ha-switch
-              .checked="${!!this._config?.hide_title}"
+              .checked="${!this._config?.hide_title}"
               .configValue="${'hide_title'}"
-              @change="${this._toggleChanged}"
+              .invert="${true}"
+              @change="${this._toggleInvertedChanged}"
             ></ha-switch>
           </ha-formfield>
 
@@ -331,7 +348,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
       <div class="waste-row">
         <div class="waste-type-header">${type}</div>
         <div class="waste-inputs">
-          <!-- Color picker -->
           <div class="color-picker-box">
             <input 
               type="color" 
@@ -340,7 +356,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
             />
           </div>
 
-          <!-- Icon Selector Dropdown -->
           <div class="icon-selector">
             <select 
               .value="${isCustomIcon ? 'custom' : selectedIcon}"
@@ -351,7 +366,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
             </select>
           </div>
 
-          <!-- Custom icon input (only if custom is selected) -->
           <div class="custom-icon-input">
             <input 
               type="text" 
@@ -371,28 +385,55 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     if (field === 'color') {
       const customColors = { ...(this._config.custom_colors || {}) };
       customColors[type] = value;
-      this._config = {
-        ...this._config,
-        custom_colors: customColors
-      };
+      this._config = { ...this._config, custom_colors: customColors };
     } else if (field === 'icon-select') {
       if (value !== 'custom') {
         const customIcons = { ...(this._config.custom_icons || {}) };
         customIcons[type] = value;
-        this._config = {
-          ...this._config,
-          custom_icons: customIcons
-        };
+        this._config = { ...this._config, custom_icons: customIcons };
       }
     } else if (field === 'icon-text') {
       const customIcons = { ...(this._config.custom_icons || {}) };
       customIcons[type] = value;
-      this._config = {
-        ...this._config,
-        custom_icons: customIcons
-      };
+      this._config = { ...this._config, custom_icons: customIcons };
     }
 
+    this._fireConfigChanged();
+  }
+
+  private _entityChanged(ev: any): void {
+    if (!this._config) return;
+    const index = ev.target.index;
+    const value = ev.detail.value;
+
+    const list = [...this._entitiesList];
+    if (value) {
+      list[index] = value;
+    } else {
+      list.splice(index, 1);
+    }
+
+    this._updateEntities(list);
+  }
+
+  private _addEntity(): void {
+    const list = [...this._entitiesList, ''];
+    this._updateEntities(list);
+  }
+
+  private _removeEntity(index: number): void {
+    const list = [...this._entitiesList];
+    list.splice(index, 1);
+    this._updateEntities(list);
+  }
+
+  private _updateEntities(list: string[]): void {
+    const cleanList = list.filter(Boolean);
+    this._config = {
+      ...this._config,
+      entity: undefined, // Clear legacy single entity key
+      entities: cleanList.length > 0 ? cleanList : undefined
+    };
     this._fireConfigChanged();
   }
 
@@ -401,12 +442,13 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
       return;
     }
     const target = ev.target;
-    const configValue = target.configValue;
+    const configValue = target.configValue || target.getAttribute('configValue');
     
     if (configValue) {
       let value = target.value;
-      if (target.type === 'number') {
+      if (configValue === 'max_items' || configValue === 'hide_before') {
         value = Number(value);
+        if (isNaN(value)) value = undefined;
       }
       this._config = {
         ...this._config,
@@ -416,27 +458,31 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     }
   }
 
-  private _entitiesChanged(ev: any): void {
-    if (!this._config) return;
-    const val = ev.target.value;
-    const entities = val.split(',').map((e: string) => e.trim()).filter(Boolean);
-    this._config = {
-      ...this._config,
-      entities: entities.length > 0 ? entities : undefined
-    };
-    this._fireConfigChanged();
-  }
-
   private _toggleChanged(ev: any): void {
     if (!this._config || !this.hass) {
       return;
     }
     const target = ev.target;
-    const configValue = target.configValue;
+    const configValue = target.configValue || target.getAttribute('configValue');
     if (configValue) {
       this._config = {
         ...this._config,
         [configValue]: target.checked,
+      };
+      this._fireConfigChanged();
+    }
+  }
+
+  private _toggleInvertedChanged(ev: any): void {
+    if (!this._config || !this.hass) {
+      return;
+    }
+    const target = ev.target;
+    const configValue = target.configValue || target.getAttribute('configValue');
+    if (configValue) {
+      this._config = {
+        ...this._config,
+        [configValue]: !target.checked,
       };
       this._fireConfigChanged();
     }
@@ -467,6 +513,44 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 4px;
       margin-top: 8px;
+    }
+    .entities-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .entity-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .entity-row ha-entity-picker {
+      flex: 1;
+    }
+    .delete-btn, .add-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--primary-text-color, #fff);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover {
+      background: rgba(244, 67, 54, 0.2);
+      border-color: rgba(244, 67, 54, 0.4);
+    }
+    .add-btn {
+      padding: 8px 16px;
+      width: fit-content;
+      gap: 6px;
+    }
+    .add-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
     .color-row {
       display: flex;
