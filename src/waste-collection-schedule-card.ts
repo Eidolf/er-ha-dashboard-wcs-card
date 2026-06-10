@@ -10,8 +10,6 @@ import './waste-collection-schedule-card-editor';
 function hexToRgbStr(colorStr: string): string {
   let hex = colorStr.trim();
   if (hex.startsWith('var(')) {
-    // If it's a CSS variable, we can't easily parse it to RGB on the server/JS side directly,
-    // so we return a default or let it degrade.
     return '244, 67, 54';
   }
   hex = hex.replace('#', '');
@@ -21,6 +19,39 @@ function hexToRgbStr(colorStr: string): string {
   const num = parseInt(hex, 16);
   if (isNaN(num)) return '244, 67, 54';
   return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+}
+
+function parseDateString(str: string): Date | null {
+  if (!str) return null;
+  // Try to match YYYY-MM-DD
+  let match = str.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+  // Try to match DD.MM.YYYY
+  match = str.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+  if (match) {
+    return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+  }
+  // Try to match MM/DD/YYYY
+  match = str.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (match) {
+    return new Date(Number(match[3]), Number(match[1]) - 1, Number(match[2]));
+  }
+  return null;
+}
+
+function calculateDaysDifference(targetDate: Date, currentDate: Date): number {
+  const d1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  const d2 = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  const diffTime = d1.getTime() - d2.getTime();
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function cleanWasteName(name: string): string {
+  return name
+    .replace(/Waste Collection Schedule\s*/gi, '')
+    .trim();
 }
 
 @customElement('waste-collection-schedule-card')
@@ -50,7 +81,6 @@ export class WasteCollectionScheduleCard extends LitElement {
       throw new Error('Invalid configuration');
     }
     
-    // Normalize config
     this.config = {
       layout: 'card',
       hide_before: -1,
@@ -61,8 +91,8 @@ export class WasteCollectionScheduleCard extends LitElement {
       hide_on_click: true,
       hide_on_today: false,
       hide_title: false,
-      due_color: '#f44336', // Red
-      due_1_color: '#ff9800', // Orange
+      due_color: '#f44336',
+      due_1_color: '#ff9800',
       icon_color: 'var(--primary-text-color)',
       ...config
     };
@@ -72,7 +102,6 @@ export class WasteCollectionScheduleCard extends LitElement {
     if (changedProps.has('config')) {
       return true;
     }
-    // Update if any of the target entities' states changed
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
     if (oldHass) {
       const entities = this._getEntities();
@@ -107,9 +136,8 @@ export class WasteCollectionScheduleCard extends LitElement {
       }
     }
 
-    // Default icon mapping based on common German/English terms
     const typeLower = type.toLowerCase();
-    if (typeLower.includes('bio') || typeLower.includes('organ') || typeLower.includes('braun')) {
+    if (typeLower.includes('bio') || typeLower.includes('organ') || typeLower.includes('braun') || typeLower.includes('garten')) {
       return 'mdi:leaf';
     }
     if (typeLower.includes('papier') || typeLower.includes('pappe') || typeLower.includes('blau')) {
@@ -147,9 +175,8 @@ export class WasteCollectionScheduleCard extends LitElement {
       }
     }
 
-    // Default color mapping
     const typeLower = type.toLowerCase();
-    if (typeLower.includes('bio') || typeLower.includes('organ') || typeLower.includes('braun')) {
+    if (typeLower.includes('bio') || typeLower.includes('organ') || typeLower.includes('braun') || typeLower.includes('garten')) {
       return '#4caf50'; // Green
     }
     if (typeLower.includes('papier') || typeLower.includes('pappe') || typeLower.includes('blau')) {
@@ -180,25 +207,28 @@ export class WasteCollectionScheduleCard extends LitElement {
   private _parseEntities(): WasteCollectionInfo[] {
     const list: WasteCollectionInfo[] = [];
     const entities = this._getEntities();
+    const today = new Date();
 
     for (const entityId of entities) {
       const stateObj = this.hass.states[entityId] as HassEntity | undefined;
       if (!stateObj) continue;
 
       const attrs = stateObj.attributes;
-      
-      // Case 1: The entity contains multiple wastes in `wastes` array attribute (standard next_collection style)
+      const friendlyName = cleanWasteName(attrs.friendly_name || entityId.split('.').pop() || 'Müll');
+
+      let parsedAny = false;
+
+      // 1. Check if the entity contains multiple wastes in `wastes` array attribute
       if (attrs.wastes && Array.isArray(attrs.wastes)) {
         for (const wasteItem of attrs.wastes) {
           const daysTo = Number(wasteItem.daysTo);
           if (isNaN(daysTo)) continue;
 
           const dateStr = wasteItem.date;
-          const wasteType = wasteItem.type || stateObj.attributes.friendly_name || 'Müll';
+          const wasteType = cleanWasteName(wasteItem.type || friendlyName);
           
           const isToday = daysTo === 0;
           const isTomorrow = daysTo === 1;
-          
           const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
           const isAcknowledged = localStorage.getItem(ackKey) === 'true';
 
@@ -214,47 +244,79 @@ export class WasteCollectionScheduleCard extends LitElement {
             isTomorrow,
             isAcknowledged,
           });
+          parsedAny = true;
         }
-      } else {
-        // Case 2: Individual sensor (one type of waste)
-        // Standard State can be the number of days or date string
+      }
+
+      // 2. Scan all attribute keys for dates (e.g. "2026-06-17": "Biotonne")
+      for (const [key, val] of Object.entries(attrs)) {
+        const parsedDate = parseDateString(key);
+        if (parsedDate) {
+          const daysTo = calculateDaysDifference(parsedDate, today);
+          if (daysTo < 0) continue; // Skip past collections
+
+          const wasteType = cleanWasteName(String(val));
+          const dateStr = key;
+          const isToday = daysTo === 0;
+          const isTomorrow = daysTo === 1;
+          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
+          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
+          if (!list.some(item => item.entityId === entityId && item.friendlyName === wasteType && item.dateText === dateStr)) {
+            list.push({
+              entityId,
+              friendlyName: wasteType,
+              daysTo,
+              dateText: dateStr,
+              types: [wasteType],
+              icon: this._getWasteIcon(wasteType),
+              color: this._getWasteColor(wasteType),
+              isToday,
+              isTomorrow,
+              isAcknowledged,
+            });
+            parsedAny = true;
+          }
+        }
+      }
+
+      // 3. Fallback: Parse state itself
+      if (!parsedAny) {
         let daysTo = Number(stateObj.state);
-        if (isNaN(daysTo) && attrs.daysTo !== undefined) {
-          daysTo = Number(attrs.daysTo);
-        }
-        
-        // If state is not a number, see if we can read daysTo from attributes
+        let dateText = attrs.dateText || '';
+        let wasteType = friendlyName;
+
+        // If not a number, try parsing state as a date string (e.g. "on Wed, 17.06.2026")
         if (isNaN(daysTo)) {
-          continue;
+          const parsedDate = parseDateString(stateObj.state);
+          if (parsedDate) {
+            daysTo = calculateDaysDifference(parsedDate, today);
+            dateText = stateObj.state.replace(/^on\s+\w+,\s+/i, ''); // clean prefix like "on Wed, "
+          }
         }
 
-        const friendlyName = attrs.friendly_name || entityId;
-        const types = attrs.types || [friendlyName];
-        const primaryType = types[0] || friendlyName;
-        
-        const dateText = attrs.dateText || '';
-        const isToday = daysTo === 0;
-        const isTomorrow = daysTo === 1;
+        if (!isNaN(daysTo) && daysTo >= 0) {
+          const isToday = daysTo === 0;
+          const isTomorrow = daysTo === 1;
+          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateText}`;
+          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
 
-        const ackKey = `wcs_ack_${entityId}_${primaryType}_${dateText}`;
-        const isAcknowledged = localStorage.getItem(ackKey) === 'true';
-
-        list.push({
-          entityId,
-          friendlyName,
-          daysTo,
-          dateText,
-          types,
-          icon: this._getWasteIcon(primaryType),
-          color: this._getWasteColor(primaryType),
-          isToday,
-          isTomorrow,
-          isAcknowledged,
-        });
+          list.push({
+            entityId,
+            friendlyName: wasteType,
+            daysTo,
+            dateText,
+            types: [wasteType],
+            icon: this._getWasteIcon(wasteType),
+            color: this._getWasteColor(wasteType),
+            isToday,
+            isTomorrow,
+            isAcknowledged,
+          });
+        }
       }
     }
 
-    // Sort list by days remaining
     return list.sort((a, b) => a.daysTo - b.daysTo);
   }
 
@@ -273,28 +335,19 @@ export class WasteCollectionScheduleCard extends LitElement {
     const parsedItems = this._parseEntities();
     const lang = this.config.language || this.hass.language || 'en';
 
-    // Filter based on configuration
     const filteredItems = parsedItems.filter(item => {
-      // Hide acknowledged items
       if (item.isAcknowledged) return false;
-
-      // Hide today if hide_on_today config is active
       if (this.config.hide_on_today && item.isToday) return false;
-
-      // Hide if before threshold
       if (this.config.hide_before !== undefined && this.config.hide_before > -1) {
         if (item.daysTo > this.config.hide_before) return false;
       }
-
       return true;
     });
 
     if (filteredItems.length === 0) {
-      // If we are to hide the whole card, return empty
       return html``;
     }
 
-    // Generate style overrides for rgb colors
     const dueColorHex = this.config.due_color || '#f44336';
     const due1ColorHex = this.config.due_1_color || '#ff9800';
 
@@ -322,7 +375,6 @@ export class WasteCollectionScheduleCard extends LitElement {
   }
 
   private _renderItem(item: WasteCollectionInfo, lang: string): TemplateResult {
-    // Choose status text
     let statusText = '';
     if (item.isToday) {
       statusText = localize('state.today', '', '', lang);
@@ -334,7 +386,6 @@ export class WasteCollectionScheduleCard extends LitElement {
       statusText = localize('state.in_days', '{days}', String(item.daysTo), lang);
     }
 
-    // Icon dynamic styling
     let iconColor = item.color;
     if (item.isToday && this.config.due_color) {
       iconColor = this.config.due_color;
@@ -400,7 +451,6 @@ export class WasteCollectionScheduleCard extends LitElement {
   }
 }
 
-// Add the card to Home Assistant's card list
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
   type: 'waste-collection-schedule-card',

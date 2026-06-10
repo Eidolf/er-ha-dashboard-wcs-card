@@ -1,4 +1,4 @@
-function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPropertyDescriptor(e,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)n=Reflect.decorate(t,e,i,s);else for(var a=t.length-1;a>=0;a--)(o=t[a])&&(n=(r<3?o(n):r>3?o(e,i,n):o(e,i))||n);return r>3&&n&&Object.defineProperty(e,i,n),n}function e(t,e){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(t,e)}"function"==typeof SuppressedError&&SuppressedError;const i=globalThis,s=i.ShadowRoot&&(void 0===i.ShadyCSS||i.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,o=Symbol(),r=new WeakMap;let n=class{constructor(t,e,i){if(this._$cssResult$=!0,i!==o)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const e=this.t;if(s&&void 0===t){const i=void 0!==e&&1===e.length;i&&(t=r.get(e)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),i&&r.set(e,t))}return t}toString(){return this.cssText}};const a=(t,...e)=>{const i=1===t.length?t[0]:e.reduce((e,i,s)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[s+1],t[0]);return new n(i,t,o)},c=s?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new n("string"==typeof t?t:t+"",void 0,o))(e)})(t):t,{is:d,defineProperty:l,getOwnPropertyDescriptor:h,getOwnPropertyNames:u,getOwnPropertySymbols:f,getPrototypeOf:g}=Object,p=globalThis,_=p.trustedTypes,y=_?_.emptyScript:"",m=p.reactiveElementPolyfillSupport,$=(t,e)=>t,b={toAttribute(t,e){switch(e){case Boolean:t=t?y:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},w=(t,e)=>!d(t,e),v={attribute:!0,type:String,converter:b,reflect:!1,useDefault:!1,hasChanged:w};Symbol.metadata??=Symbol("metadata"),p.litPropertyMetadata??=new WeakMap;let x=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=v){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(t,i,e);void 0!==s&&l(this.prototype,t,s)}}static getPropertyDescriptor(t,e,i){const{get:s,set:o}=h(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:s,set(e){const r=s?.call(this);o?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??v}static _$Ei(){if(this.hasOwnProperty($("elementProperties")))return;const t=g(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty($("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty($("properties"))){const t=this.properties,e=[...u(t),...f(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(c(t))}else void 0!==t&&e.push(c(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((t,e)=>{if(s)t.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const s of e){const e=document.createElement("style"),o=i.litNonce;void 0!==o&&e.setAttribute("nonce",o),e.textContent=s.cssText,t.appendChild(e)}})(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),s=this.constructor._$Eu(t,i);if(void 0!==s&&!0===i.reflect){const o=(void 0!==i.converter?.toAttribute?i.converter:b).toAttribute(e,i.type);this._$Em=t,null==o?this.removeAttribute(s):this.setAttribute(s,o),this._$Em=null}}_$AK(t,e){const i=this.constructor,s=i._$Eh.get(t);if(void 0!==s&&this._$Em!==s){const t=i.getPropertyOptions(s),o="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:b;this._$Em=s;const r=o.fromAttribute(e,t.type);this[s]=r??this._$Ej?.get(s)??r,this._$Em=null}}requestUpdate(t,e,i,s=!1,o){if(void 0!==t){const r=this.constructor;if(!1===s&&(o=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??w)(o,e)||i.useDefault&&i.reflect&&o===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:s,wrapped:o},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==o||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===s&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,s=this[e];!0!==t||this._$AL.has(e)||void 0===s||this.C(e,void 0,i,s)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};x.elementStyles=[],x.shadowRootOptions={mode:"open"},x[$("elementProperties")]=new Map,x[$("finalized")]=new Map,m?.({ReactiveElement:x}),(p.reactiveElementVersions??=[]).push("2.1.2");const A=globalThis,C=t=>t,E=A.trustedTypes,S=E?E.createPolicy("lit-html",{createHTML:t=>t}):void 0,T="$lit$",k=`lit$${Math.random().toFixed(9).slice(2)}$`,O="?"+k,P=`<${O}>`,N=document,z=()=>N.createComment(""),U=t=>null===t||"object"!=typeof t&&"function"!=typeof t,H=Array.isArray,I="[ \t\n\f\r]",M=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,R=/-->/g,j=/>/g,L=RegExp(`>|${I}(?:([^\\s"'>=/]+)(${I}*=${I}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),D=/'/g,V=/"/g,B=/^(?:script|style|textarea|title)$/i,W=(t=>(e,...i)=>({_$litType$:t,strings:e,values:i}))(1),q=Symbol.for("lit-noChange"),J=Symbol.for("lit-nothing"),K=new WeakMap,F=N.createTreeWalker(N,129);function G(t,e){if(!H(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==S?S.createHTML(e):e}const Z=(t,e)=>{const i=t.length-1,s=[];let o,r=2===e?"<svg>":3===e?"<math>":"",n=M;for(let e=0;e<i;e++){const i=t[e];let a,c,d=-1,l=0;for(;l<i.length&&(n.lastIndex=l,c=n.exec(i),null!==c);)l=n.lastIndex,n===M?"!--"===c[1]?n=R:void 0!==c[1]?n=j:void 0!==c[2]?(B.test(c[2])&&(o=RegExp("</"+c[2],"g")),n=L):void 0!==c[3]&&(n=L):n===L?">"===c[0]?(n=o??M,d=-1):void 0===c[1]?d=-2:(d=n.lastIndex-c[2].length,a=c[1],n=void 0===c[3]?L:'"'===c[3]?V:D):n===V||n===D?n=L:n===R||n===j?n=M:(n=L,o=void 0);const h=n===L&&t[e+1].startsWith("/>")?" ":"";r+=n===M?i+P:d>=0?(s.push(a),i.slice(0,d)+T+i.slice(d)+k+h):i+k+(-2===d?e:h)}return[G(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),s]};class X{constructor({strings:t,_$litType$:e},i){let s;this.parts=[];let o=0,r=0;const n=t.length-1,a=this.parts,[c,d]=Z(t,e);if(this.el=X.createElement(c,i),F.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(s=F.nextNode())&&a.length<n;){if(1===s.nodeType){if(s.hasAttributes())for(const t of s.getAttributeNames())if(t.endsWith(T)){const e=d[r++],i=s.getAttribute(t).split(k),n=/([.?@])?(.*)/.exec(e);a.push({type:1,index:o,name:n[2],strings:i,ctor:"."===n[1]?it:"?"===n[1]?st:"@"===n[1]?ot:et}),s.removeAttribute(t)}else t.startsWith(k)&&(a.push({type:6,index:o}),s.removeAttribute(t));if(B.test(s.tagName)){const t=s.textContent.split(k),e=t.length-1;if(e>0){s.textContent=E?E.emptyScript:"";for(let i=0;i<e;i++)s.append(t[i],z()),F.nextNode(),a.push({type:2,index:++o});s.append(t[e],z())}}}else if(8===s.nodeType)if(s.data===O)a.push({type:2,index:o});else{let t=-1;for(;-1!==(t=s.data.indexOf(k,t+1));)a.push({type:7,index:o}),t+=k.length-1}o++}}static createElement(t,e){const i=N.createElement("template");return i.innerHTML=t,i}}function Y(t,e,i=t,s){if(e===q)return e;let o=void 0!==s?i._$Co?.[s]:i._$Cl;const r=U(e)?void 0:e._$litDirective$;return o?.constructor!==r&&(o?._$AO?.(!1),void 0===r?o=void 0:(o=new r(t),o._$AT(t,i,s)),void 0!==s?(i._$Co??=[])[s]=o:i._$Cl=o),void 0!==o&&(e=Y(t,o._$AS(t,e.values),o,s)),e}class Q{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,s=(t?.creationScope??N).importNode(e,!0);F.currentNode=s;let o=F.nextNode(),r=0,n=0,a=i[0];for(;void 0!==a;){if(r===a.index){let e;2===a.type?e=new tt(o,o.nextSibling,this,t):1===a.type?e=new a.ctor(o,a.name,a.strings,this,t):6===a.type&&(e=new rt(o,this,t)),this._$AV.push(e),a=i[++n]}r!==a?.index&&(o=F.nextNode(),r++)}return F.currentNode=N,s}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class tt{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,s){this.type=2,this._$AH=J,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Y(this,t,e),U(t)?t===J||null==t||""===t?(this._$AH!==J&&this._$AR(),this._$AH=J):t!==this._$AH&&t!==q&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>H(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==J&&U(this._$AH)?this._$AA.nextSibling.data=t:this.T(N.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,s="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=X.createElement(G(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(e);else{const t=new Q(s,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=K.get(t.strings);return void 0===e&&K.set(t.strings,e=new X(t)),e}k(t){H(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,s=0;for(const o of t)s===e.length?e.push(i=new tt(this.O(z()),this.O(z()),this,this.options)):i=e[s],i._$AI(o),s++;s<e.length&&(this._$AR(i&&i._$AB.nextSibling,s),e.length=s)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=C(t).nextSibling;C(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class et{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,s,o){this.type=1,this._$AH=J,this._$AN=void 0,this.element=t,this.name=e,this._$AM=s,this.options=o,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=J}_$AI(t,e=this,i,s){const o=this.strings;let r=!1;if(void 0===o)t=Y(this,t,e,0),r=!U(t)||t!==this._$AH&&t!==q,r&&(this._$AH=t);else{const s=t;let n,a;for(t=o[0],n=0;n<o.length-1;n++)a=Y(this,s[i+n],e,n),a===q&&(a=this._$AH[n]),r||=!U(a)||a!==this._$AH[n],a===J?t=J:t!==J&&(t+=(a??"")+o[n+1]),this._$AH[n]=a}r&&!s&&this.j(t)}j(t){t===J?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class it extends et{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===J?void 0:t}}class st extends et{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==J)}}class ot extends et{constructor(t,e,i,s,o){super(t,e,i,s,o),this.type=5}_$AI(t,e=this){if((t=Y(this,t,e,0)??J)===q)return;const i=this._$AH,s=t===J&&i!==J||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,o=t!==J&&(i===J||s);s&&this.element.removeEventListener(this.name,this,i),o&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class rt{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Y(this,t)}}const nt=A.litHtmlPolyfillSupport;nt?.(X,tt),(A.litHtmlVersions??=[]).push("3.3.3");const at=globalThis;class ct extends x{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const s=i?.renderBefore??e;let o=s._$litPart$;if(void 0===o){const t=i?.renderBefore??null;s._$litPart$=o=new tt(e.insertBefore(z(),t),t,void 0,i??{})}return o._$AI(t),o})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return q}}ct._$litElement$=!0,ct.finalized=!0,at.litElementHydrateSupport?.({LitElement:ct});const dt=at.litElementPolyfillSupport;dt?.({LitElement:ct}),(at.litElementVersions??=[]).push("4.2.2");const lt=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)},ht={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:w},ut=(t=ht,e,i)=>{const{kind:s,metadata:o}=i;let r=globalThis.litPropertyMetadata.get(o);if(void 0===r&&globalThis.litPropertyMetadata.set(o,r=new Map),"setter"===s&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===s){const{name:s}=i;return{set(i){const o=e.get.call(this);e.set.call(this,i),this.requestUpdate(s,o,t,!0,i)},init(e){return void 0!==e&&this.C(s,void 0,t,e),e}}}if("setter"===s){const{name:s}=i;return function(i){const o=this[s];e.call(this,i),this.requestUpdate(s,o,t,!0,i)}}throw Error("Unsupported decorator location: "+s)};function ft(t){return(e,i)=>"object"==typeof i?ut(t,e,i):((t,e,i)=>{const s=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),s?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}function gt(t){return ft({...t,state:!0,attribute:!1})}const pt=a`
+function e(e,t,i,s){var o,r=arguments.length,n=r<3?t:null===s?s=Object.getOwnPropertyDescriptor(t,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)n=Reflect.decorate(e,t,i,s);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(n=(r<3?o(n):r>3?o(t,i,n):o(t,i))||n);return r>3&&n&&Object.defineProperty(t,i,n),n}function t(e,t){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(e,t)}"function"==typeof SuppressedError&&SuppressedError;const i=globalThis,s=i.ShadowRoot&&(void 0===i.ShadyCSS||i.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,o=Symbol(),r=new WeakMap;let n=class{constructor(e,t,i){if(this._$cssResult$=!0,i!==o)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e,this.t=t}get styleSheet(){let e=this.o;const t=this.t;if(s&&void 0===e){const i=void 0!==t&&1===t.length;i&&(e=r.get(t)),void 0===e&&((this.o=e=new CSSStyleSheet).replaceSync(this.cssText),i&&r.set(t,e))}return e}toString(){return this.cssText}};const a=(e,...t)=>{const i=1===e.length?e[0]:t.reduce((t,i,s)=>t+(e=>{if(!0===e._$cssResult$)return e.cssText;if("number"==typeof e)return e;throw Error("Value passed to 'css' function must be a 'css' function result: "+e+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+e[s+1],e[0]);return new n(i,e,o)},c=s?e=>e:e=>e instanceof CSSStyleSheet?(e=>{let t="";for(const i of e.cssRules)t+=i.cssText;return(e=>new n("string"==typeof e?e:e+"",void 0,o))(t)})(e):e,{is:l,defineProperty:d,getOwnPropertyDescriptor:h,getOwnPropertyNames:u,getOwnPropertySymbols:p,getPrototypeOf:g}=Object,f=globalThis,_=f.trustedTypes,m=_?_.emptyScript:"",y=f.reactiveElementPolyfillSupport,$=(e,t)=>e,b={toAttribute(e,t){switch(t){case Boolean:e=e?m:null;break;case Object:case Array:e=null==e?e:JSON.stringify(e)}return e},fromAttribute(e,t){let i=e;switch(t){case Boolean:i=null!==e;break;case Number:i=null===e?null:Number(e);break;case Object:case Array:try{i=JSON.parse(e)}catch(e){i=null}}return i}},w=(e,t)=>!l(e,t),v={attribute:!0,type:String,converter:b,reflect:!1,useDefault:!1,hasChanged:w};Symbol.metadata??=Symbol("metadata"),f.litPropertyMetadata??=new WeakMap;let x=class extends HTMLElement{static addInitializer(e){this._$Ei(),(this.l??=[]).push(e)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(e,t=v){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(e)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(e,t),!t.noAccessor){const i=Symbol(),s=this.getPropertyDescriptor(e,i,t);void 0!==s&&d(this.prototype,e,s)}}static getPropertyDescriptor(e,t,i){const{get:s,set:o}=h(this.prototype,e)??{get(){return this[t]},set(e){this[t]=e}};return{get:s,set(t){const r=s?.call(this);o?.call(this,t),this.requestUpdate(e,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)??v}static _$Ei(){if(this.hasOwnProperty($("elementProperties")))return;const e=g(this);e.finalize(),void 0!==e.l&&(this.l=[...e.l]),this.elementProperties=new Map(e.elementProperties)}static finalize(){if(this.hasOwnProperty($("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty($("properties"))){const e=this.properties,t=[...u(e),...p(e)];for(const i of t)this.createProperty(i,e[i])}const e=this[Symbol.metadata];if(null!==e){const t=litPropertyMetadata.get(e);if(void 0!==t)for(const[e,i]of t)this.elementProperties.set(e,i)}this._$Eh=new Map;for(const[e,t]of this.elementProperties){const i=this._$Eu(e,t);void 0!==i&&this._$Eh.set(i,e)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const i=new Set(e.flat(1/0).reverse());for(const e of i)t.unshift(c(e))}else void 0!==e&&t.push(c(e));return t}static _$Eu(e,t){const i=t.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof e?e.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(e=>this.enableUpdating=e),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(e=>e(this))}addController(e){(this._$EO??=new Set).add(e),void 0!==this.renderRoot&&this.isConnected&&e.hostConnected?.()}removeController(e){this._$EO?.delete(e)}_$E_(){const e=new Map,t=this.constructor.elementProperties;for(const i of t.keys())this.hasOwnProperty(i)&&(e.set(i,this[i]),delete this[i]);e.size>0&&(this._$Ep=e)}createRenderRoot(){const e=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((e,t)=>{if(s)e.adoptedStyleSheets=t.map(e=>e instanceof CSSStyleSheet?e:e.styleSheet);else for(const s of t){const t=document.createElement("style"),o=i.litNonce;void 0!==o&&t.setAttribute("nonce",o),t.textContent=s.cssText,e.appendChild(t)}})(e,this.constructor.elementStyles),e}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(e=>e.hostConnected?.())}enableUpdating(e){}disconnectedCallback(){this._$EO?.forEach(e=>e.hostDisconnected?.())}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ET(e,t){const i=this.constructor.elementProperties.get(e),s=this.constructor._$Eu(e,i);if(void 0!==s&&!0===i.reflect){const o=(void 0!==i.converter?.toAttribute?i.converter:b).toAttribute(t,i.type);this._$Em=e,null==o?this.removeAttribute(s):this.setAttribute(s,o),this._$Em=null}}_$AK(e,t){const i=this.constructor,s=i._$Eh.get(e);if(void 0!==s&&this._$Em!==s){const e=i.getPropertyOptions(s),o="function"==typeof e.converter?{fromAttribute:e.converter}:void 0!==e.converter?.fromAttribute?e.converter:b;this._$Em=s;const r=o.fromAttribute(t,e.type);this[s]=r??this._$Ej?.get(s)??r,this._$Em=null}}requestUpdate(e,t,i,s=!1,o){if(void 0!==e){const r=this.constructor;if(!1===s&&(o=this[e]),i??=r.getPropertyOptions(e),!((i.hasChanged??w)(o,t)||i.useDefault&&i.reflect&&o===this._$Ej?.get(e)&&!this.hasAttribute(r._$Eu(e,i))))return;this.C(e,t,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(e,t,{useDefault:i,reflect:s,wrapped:o},r){i&&!(this._$Ej??=new Map).has(e)&&(this._$Ej.set(e,r??t??this[e]),!0!==o||void 0!==r)||(this._$AL.has(e)||(this.hasUpdated||i||(t=void 0),this._$AL.set(e,t)),!0===s&&this._$Em!==e&&(this._$Eq??=new Set).add(e))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(e){Promise.reject(e)}const e=this.scheduleUpdate();return null!=e&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[e,t]of this._$Ep)this[e]=t;this._$Ep=void 0}const e=this.constructor.elementProperties;if(e.size>0)for(const[t,i]of e){const{wrapped:e}=i,s=this[t];!0!==e||this._$AL.has(t)||void 0===s||this.C(t,void 0,i,s)}}let e=!1;const t=this._$AL;try{e=this.shouldUpdate(t),e?(this.willUpdate(t),this._$EO?.forEach(e=>e.hostUpdate?.()),this.update(t)):this._$EM()}catch(t){throw e=!1,this._$EM(),t}e&&this._$AE(t)}willUpdate(e){}_$AE(e){this._$EO?.forEach(e=>e.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(e){return!0}update(e){this._$Eq&&=this._$Eq.forEach(e=>this._$ET(e,this[e])),this._$EM()}updated(e){}firstUpdated(e){}};x.elementStyles=[],x.shadowRootOptions={mode:"open"},x[$("elementProperties")]=new Map,x[$("finalized")]=new Map,y?.({ReactiveElement:x}),(f.reactiveElementVersions??=[]).push("2.1.2");const A=globalThis,C=e=>e,S=A.trustedTypes,E=S?S.createPolicy("lit-html",{createHTML:e=>e}):void 0,T="$lit$",k=`lit$${Math.random().toFixed(9).slice(2)}$`,N="?"+k,z=`<${N}>`,P=document,O=()=>P.createComment(""),I=e=>null===e||"object"!=typeof e&&"function"!=typeof e,U=Array.isArray,H="[ \t\n\f\r]",M=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,R=/-->/g,D=/>/g,j=RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),W=/'/g,L=/"/g,V=/^(?:script|style|textarea|title)$/i,B=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),q=Symbol.for("lit-noChange"),G=Symbol.for("lit-nothing"),F=new WeakMap,K=P.createTreeWalker(P,129);function J(e,t){if(!U(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==E?E.createHTML(t):t}const Z=(e,t)=>{const i=e.length-1,s=[];let o,r=2===t?"<svg>":3===t?"<math>":"",n=M;for(let t=0;t<i;t++){const i=e[t];let a,c,l=-1,d=0;for(;d<i.length&&(n.lastIndex=d,c=n.exec(i),null!==c);)d=n.lastIndex,n===M?"!--"===c[1]?n=R:void 0!==c[1]?n=D:void 0!==c[2]?(V.test(c[2])&&(o=RegExp("</"+c[2],"g")),n=j):void 0!==c[3]&&(n=j):n===j?">"===c[0]?(n=o??M,l=-1):void 0===c[1]?l=-2:(l=n.lastIndex-c[2].length,a=c[1],n=void 0===c[3]?j:'"'===c[3]?L:W):n===L||n===W?n=j:n===R||n===D?n=M:(n=j,o=void 0);const h=n===j&&e[t+1].startsWith("/>")?" ":"";r+=n===M?i+z:l>=0?(s.push(a),i.slice(0,l)+T+i.slice(l)+k+h):i+k+(-2===l?t:h)}return[J(e,r+(e[i]||"<?>")+(2===t?"</svg>":3===t?"</math>":"")),s]};class Y{constructor({strings:e,_$litType$:t},i){let s;this.parts=[];let o=0,r=0;const n=e.length-1,a=this.parts,[c,l]=Z(e,t);if(this.el=Y.createElement(c,i),K.currentNode=this.el.content,2===t||3===t){const e=this.el.content.firstChild;e.replaceWith(...e.childNodes)}for(;null!==(s=K.nextNode())&&a.length<n;){if(1===s.nodeType){if(s.hasAttributes())for(const e of s.getAttributeNames())if(e.endsWith(T)){const t=l[r++],i=s.getAttribute(e).split(k),n=/([.?@])?(.*)/.exec(t);a.push({type:1,index:o,name:n[2],strings:i,ctor:"."===n[1]?ie:"?"===n[1]?se:"@"===n[1]?oe:te}),s.removeAttribute(e)}else e.startsWith(k)&&(a.push({type:6,index:o}),s.removeAttribute(e));if(V.test(s.tagName)){const e=s.textContent.split(k),t=e.length-1;if(t>0){s.textContent=S?S.emptyScript:"";for(let i=0;i<t;i++)s.append(e[i],O()),K.nextNode(),a.push({type:2,index:++o});s.append(e[t],O())}}}else if(8===s.nodeType)if(s.data===N)a.push({type:2,index:o});else{let e=-1;for(;-1!==(e=s.data.indexOf(k,e+1));)a.push({type:7,index:o}),e+=k.length-1}o++}}static createElement(e,t){const i=P.createElement("template");return i.innerHTML=e,i}}function X(e,t,i=e,s){if(t===q)return t;let o=void 0!==s?i._$Co?.[s]:i._$Cl;const r=I(t)?void 0:t._$litDirective$;return o?.constructor!==r&&(o?._$AO?.(!1),void 0===r?o=void 0:(o=new r(e),o._$AT(e,i,s)),void 0!==s?(i._$Co??=[])[s]=o:i._$Cl=o),void 0!==o&&(t=X(e,o._$AS(e,t.values),o,s)),t}class Q{constructor(e,t){this._$AV=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(e){const{el:{content:t},parts:i}=this._$AD,s=(e?.creationScope??P).importNode(t,!0);K.currentNode=s;let o=K.nextNode(),r=0,n=0,a=i[0];for(;void 0!==a;){if(r===a.index){let t;2===a.type?t=new ee(o,o.nextSibling,this,e):1===a.type?t=new a.ctor(o,a.name,a.strings,this,e):6===a.type&&(t=new re(o,this,e)),this._$AV.push(t),a=i[++n]}r!==a?.index&&(o=K.nextNode(),r++)}return K.currentNode=P,s}p(e){let t=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class ee{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(e,t,i,s){this.type=2,this._$AH=G,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=s,this._$Cv=s?.isConnected??!0}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e?.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=X(this,e,t),I(e)?e===G||null==e||""===e?(this._$AH!==G&&this._$AR(),this._$AH=G):e!==this._$AH&&e!==q&&this._(e):void 0!==e._$litType$?this.$(e):void 0!==e.nodeType?this.T(e):(e=>U(e)||"function"==typeof e?.[Symbol.iterator])(e)?this.k(e):this._(e)}O(e){return this._$AA.parentNode.insertBefore(e,this._$AB)}T(e){this._$AH!==e&&(this._$AR(),this._$AH=this.O(e))}_(e){this._$AH!==G&&I(this._$AH)?this._$AA.nextSibling.data=e:this.T(P.createTextNode(e)),this._$AH=e}$(e){const{values:t,_$litType$:i}=e,s="number"==typeof i?this._$AC(e):(void 0===i.el&&(i.el=Y.createElement(J(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===s)this._$AH.p(t);else{const e=new Q(s,this),i=e.u(this.options);e.p(t),this.T(i),this._$AH=e}}_$AC(e){let t=F.get(e.strings);return void 0===t&&F.set(e.strings,t=new Y(e)),t}k(e){U(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,s=0;for(const o of e)s===t.length?t.push(i=new ee(this.O(O()),this.O(O()),this,this.options)):i=t[s],i._$AI(o),s++;s<t.length&&(this._$AR(i&&i._$AB.nextSibling,s),t.length=s)}_$AR(e=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);e!==this._$AB;){const t=C(e).nextSibling;C(e).remove(),e=t}}setConnected(e){void 0===this._$AM&&(this._$Cv=e,this._$AP?.(e))}}class te{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(e,t,i,s,o){this.type=1,this._$AH=G,this._$AN=void 0,this.element=e,this.name=t,this._$AM=s,this.options=o,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=G}_$AI(e,t=this,i,s){const o=this.strings;let r=!1;if(void 0===o)e=X(this,e,t,0),r=!I(e)||e!==this._$AH&&e!==q,r&&(this._$AH=e);else{const s=e;let n,a;for(e=o[0],n=0;n<o.length-1;n++)a=X(this,s[i+n],t,n),a===q&&(a=this._$AH[n]),r||=!I(a)||a!==this._$AH[n],a===G?e=G:e!==G&&(e+=(a??"")+o[n+1]),this._$AH[n]=a}r&&!s&&this.j(e)}j(e){e===G?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}}class ie extends te{constructor(){super(...arguments),this.type=3}j(e){this.element[this.name]=e===G?void 0:e}}class se extends te{constructor(){super(...arguments),this.type=4}j(e){this.element.toggleAttribute(this.name,!!e&&e!==G)}}class oe extends te{constructor(e,t,i,s,o){super(e,t,i,s,o),this.type=5}_$AI(e,t=this){if((e=X(this,e,t,0)??G)===q)return;const i=this._$AH,s=e===G&&i!==G||e.capture!==i.capture||e.once!==i.once||e.passive!==i.passive,o=e!==G&&(i===G||s);s&&this.element.removeEventListener(this.name,this,i),o&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,e):this._$AH.handleEvent(e)}}class re{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){X(this,e)}}const ne=A.litHtmlPolyfillSupport;ne?.(Y,ee),(A.litHtmlVersions??=[]).push("3.3.3");const ae=globalThis;class ce extends x{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const e=super.createRenderRoot();return this.renderOptions.renderBefore??=e.firstChild,e}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Do=((e,t,i)=>{const s=i?.renderBefore??t;let o=s._$litPart$;if(void 0===o){const e=i?.renderBefore??null;s._$litPart$=o=new ee(t.insertBefore(O(),e),e,void 0,i??{})}return o._$AI(e),o})(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return q}}ce._$litElement$=!0,ce.finalized=!0,ae.litElementHydrateSupport?.({LitElement:ce});const le=ae.litElementPolyfillSupport;le?.({LitElement:ce}),(ae.litElementVersions??=[]).push("4.2.2");const de=e=>(t,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(e,t)}):customElements.define(e,t)},he={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:w},ue=(e=he,t,i)=>{const{kind:s,metadata:o}=i;let r=globalThis.litPropertyMetadata.get(o);if(void 0===r&&globalThis.litPropertyMetadata.set(o,r=new Map),"setter"===s&&((e=Object.create(e)).wrapped=!0),r.set(i.name,e),"accessor"===s){const{name:s}=i;return{set(i){const o=t.get.call(this);t.set.call(this,i),this.requestUpdate(s,o,e,!0,i)},init(t){return void 0!==t&&this.C(s,void 0,e,t),t}}}if("setter"===s){const{name:s}=i;return function(i){const o=this[s];t.call(this,i),this.requestUpdate(s,o,e,!0,i)}}throw Error("Unsupported decorator location: "+s)};function pe(e){return(t,i)=>"object"==typeof i?ue(e,t,i):((e,t,i)=>{const s=t.hasOwnProperty(i);return t.constructor.createProperty(i,e),s?Object.getOwnPropertyDescriptor(t,i):void 0})(e,t,i)}function ge(e){return pe({...e,state:!0,attribute:!1})}const fe=a`
   :host {
     --wcs-accent-color: var(--primary-color, #03a9f4);
     --wcs-text-primary: var(--primary-text-color, #e1e1e1);
@@ -216,12 +216,12 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
       grid-template-columns: 1fr 1fr;
     }
   }
-`,_t={en:{"state.today":"Today","state.tomorrow":"Tomorrow","state.in_days":"In {days} days","state.1_day":"In 1 day","state.days":"days","state.day":"day","editor.entity":"Entity (Required)","editor.entities":"Entities (Optional, list)","editor.title":"Title","editor.layout":"Layout Style","editor.layout_card":"Standard Card","editor.layout_row":"Compact Row","editor.layout_grid":"Grid Layout","editor.hide_before":"Hide entire card until X days before (Default: -1 / disabled)","editor.hide_date":"Hide Date Text","editor.hide_days":"Hide Number of Days","editor.hide_dow":"Hide Day of the Week","editor.hide_icon":"Hide Icon","editor.hide_on_click":"Dismiss on click (when due today/tomorrow)","editor.hide_on_today":"Hide on today (e.g. if collected early in morning)","editor.hide_title":"Hide Title","editor.icon_size":"Icon Size (e.g., 30px)","editor.due_color":"Due Today Color (e.g., red or #ff0000)","editor.due_1_color":"Due Tomorrow Color (e.g., orange)","editor.icon_color":"Standard Icon Color (e.g., var(--primary-text-color))","editor.invalid_json":"Invalid JSON format"},de:{"state.today":"Heute","state.tomorrow":"Morgen","state.in_days":"In {days} Tagen","state.1_day":"In 1 Tag","state.days":"Tage","state.day":"Tag","editor.entity":"Entität (Erforderlich)","editor.entities":"Entitäten (Optional, Liste)","editor.title":"Titel","editor.layout":"Layout-Stil","editor.layout_card":"Standard-Karte","editor.layout_row":"Kompakte Zeile","editor.layout_grid":"Raster-Layout (Grid)","editor.hide_before":"Karte ausblenden bis X Tage vor Termin (Standard: -1 / inaktiv)","editor.hide_date":"Datum ausblenden","editor.hide_days":"Tage ausblenden","editor.hide_dow":"Wochentag ausblenden","editor.hide_icon":"Icon ausblenden","editor.hide_on_click":"Per Klick ausblenden (wenn heute/morgen fällig)","editor.hide_on_today":"Heute ausblenden (z.B. bei früher Abholung)","editor.hide_title":"Titel ausblenden","editor.icon_size":"Icon-Größe (z.B. 30px)","editor.due_color":"Farbe am Abholtag (z.B. red oder #ff0000)","editor.due_1_color":"Farbe am Vortag (z.B. orange)","editor.icon_color":"Standard Icon-Farbe (z.B. var(--primary-text-color))","editor.invalid_json":"Ungültiges JSON-Format"}};function yt(t,e="",i="",s="en"){const o=s.split("-")[0];let r=(_t[o]||_t.en)[t]||_t.en[t]||t;return""!==e&&""!==i&&(r=r.replace(e,i)),r}let mt=class extends ct{setConfig(t){this._config=t}get _entity(){return this._config?.entity||""}get _title(){return this._config?.title||""}get _layout(){return this._config?.layout||"card"}get _hide_before(){return this._config?.hide_before??-1}get _due_color(){return this._config?.due_color||"#f44336"}get _due_1_color(){return this._config?.due_1_color||"#ff9800"}get _icon_color(){return this._config?.icon_color||"var(--primary-text-color)"}get _icon_size(){return this._config?.icon_size||"30px"}get _custom_colors_str(){return this._config?.custom_colors?JSON.stringify(this._config.custom_colors,null,2):""}get _custom_icons_str(){return this._config?.custom_icons?JSON.stringify(this._config.custom_icons,null,2):""}render(){if(!this.hass)return W``;const t=this.hass.language||"en";return W`
+`,_e={en:{"state.today":"Today","state.tomorrow":"Tomorrow","state.in_days":"In {days} days","state.1_day":"In 1 day","state.days":"days","state.day":"day","editor.entity":"Entity (Required)","editor.entities":"Entities (Optional, list)","editor.title":"Title","editor.layout":"Layout Style","editor.layout_card":"Standard Card","editor.layout_row":"Compact Row","editor.layout_grid":"Grid Layout","editor.hide_before":"Hide entire card until X days before (Default: -1 / disabled)","editor.hide_date":"Hide Date Text","editor.hide_days":"Hide Number of Days","editor.hide_dow":"Hide Day of the Week","editor.hide_icon":"Hide Icon","editor.hide_on_click":"Dismiss on click (when due today/tomorrow)","editor.hide_on_today":"Hide on today (e.g. if collected early in morning)","editor.hide_title":"Hide Title","editor.icon_size":"Icon Size (e.g., 30px)","editor.due_color":"Due Today Color (e.g., red or #ff0000)","editor.due_1_color":"Due Tomorrow Color (e.g., orange)","editor.icon_color":"Standard Icon Color (e.g., var(--primary-text-color))","editor.invalid_json":"Invalid JSON format"},de:{"state.today":"Heute","state.tomorrow":"Morgen","state.in_days":"In {days} Tagen","state.1_day":"In 1 Tag","state.days":"Tage","state.day":"Tag","editor.entity":"Entität (Erforderlich)","editor.entities":"Entitäten (Optional, Liste)","editor.title":"Titel","editor.layout":"Layout-Stil","editor.layout_card":"Standard-Karte","editor.layout_row":"Kompakte Zeile","editor.layout_grid":"Raster-Layout (Grid)","editor.hide_before":"Karte ausblenden bis X Tage vor Termin (Standard: -1 / inaktiv)","editor.hide_date":"Datum ausblenden","editor.hide_days":"Tage ausblenden","editor.hide_dow":"Wochentag ausblenden","editor.hide_icon":"Icon ausblenden","editor.hide_on_click":"Per Klick ausblenden (wenn heute/morgen fällig)","editor.hide_on_today":"Heute ausblenden (z.B. bei früher Abholung)","editor.hide_title":"Titel ausblenden","editor.icon_size":"Icon-Größe (z.B. 30px)","editor.due_color":"Farbe am Abholtag (z.B. red oder #ff0000)","editor.due_1_color":"Farbe am Vortag (z.B. orange)","editor.icon_color":"Standard Icon-Farbe (z.B. var(--primary-text-color))","editor.invalid_json":"Ungültiges JSON-Format"}};function me(e,t="",i="",s="en"){const o=s.split("-")[0];let r=(_e[o]||_e.en)[e]||_e.en[e]||e;return""!==t&&""!==i&&(r=r.replace(t,i)),r}function ye(e){return e.replace(/Waste Collection Schedule\s*/gi,"").trim()}function $e(e){if(!e)return null;let t=e.match(/(\d{4})-(\d{2})-(\d{2})/);return t?new Date(Number(t[1]),Number(t[2])-1,Number(t[3])):(t=e.match(/(\d{2})\.(\d{2})\.(\d{4})/),t?new Date(Number(t[3]),Number(t[2])-1,Number(t[1])):null)}const be=[{value:"mdi:leaf",label:"Leaf (Bio / Garden)"},{value:"mdi:trash-can",label:"Trash Can (Restmüll)"},{value:"mdi:package-variant",label:"Package (Papier)"},{value:"mdi:recycle",label:"Recycle (Gelber Sack)"},{value:"mdi:glass-fragile",label:"Glass (Glas)"},{value:"mdi:sofa",label:"Sofa (Sperrmüll)"},{value:"mdi:biohazard",label:"Biohazard (Schadstoff)"},{value:"mdi:pine-tree",label:"Pine Tree (Weihnachtsbaum)"},{value:"mdi:trash-can-outline",label:"Default outline"}];let we=class extends ce{setConfig(e){this._config=e}get _entity(){return this._config?.entity||""}get _title(){return this._config?.title||""}get _layout(){return this._config?.layout||"card"}get _hide_before(){return this._config?.hide_before??-1}get _due_color(){return this._config?.due_color||"#f44336"}get _due_1_color(){return this._config?.due_1_color||"#ff9800"}get _icon_size(){return this._config?.icon_size||"30px"}_getDetectedWasteTypes(){if(!this.hass||!this._config)return[];const e=new Set,t=[];this._config.entity&&t.push(this._config.entity),this._config.entities&&Array.isArray(this._config.entities)&&t.push(...this._config.entities);for(const i of t){const t=this.hass.states[i];if(!t)continue;const s=t.attributes;if(s.wastes&&Array.isArray(s.wastes))for(const t of s.wastes)t.type&&e.add(ye(t.type));for(const[t,i]of Object.entries(s))$e(t)&&e.add(ye(String(i)));const o=ye(s.friendly_name||i.split(".").pop()||"");o&&e.add(o)}return Array.from(e).filter(Boolean)}_getWasteColor(e){const t=this._config?.custom_colors||{};if(t[e])return t[e];const i=e.toLowerCase();return i.includes("bio")||i.includes("organ")||i.includes("braun")||i.includes("garten")?"#4caf50":i.includes("papier")||i.includes("pappe")||i.includes("blau")?"#2196f3":i.includes("gelb")||i.includes("plastik")||i.includes("recycle")||i.includes("wertstoff")?"#fbc02d":i.includes("rest")||i.includes("hausmüll")||i.includes("grau")||i.includes("schwarz")?"#707070":i.includes("glas")||i.includes("flasche")?"#00bcd4":"#e1e1e1"}_getWasteIcon(e){const t=this._config?.custom_icons||{};if(t[e])return t[e];const i=e.toLowerCase();return i.includes("bio")||i.includes("organ")||i.includes("braun")||i.includes("garten")?"mdi:leaf":i.includes("papier")||i.includes("pappe")||i.includes("blau")?"mdi:package-variant":i.includes("gelb")||i.includes("plastik")||i.includes("recycle")||i.includes("wertstoff")?"mdi:recycle":i.includes("rest")||i.includes("hausmüll")||i.includes("grau")||i.includes("schwarz")?"mdi:trash-can":i.includes("glas")||i.includes("flasche")?"mdi:glass-fragile":"mdi:trash-can-outline"}render(){if(!this.hass)return B``;const e=this.hass.language||"en",t=this._getDetectedWasteTypes();return B`
       <div class="card-config">
-        <!-- Main Entity -->
+        <!-- Main Entity Selection -->
         <div class="option">
           <ha-entity-picker
-            .label="${yt("editor.entity","","",t)}"
+            .label="${me("editor.entity","","",e)}"
             .hass="${this.hass}"
             .value="${this._entity}"
             .configValue="${"entity"}"
@@ -230,104 +230,87 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
           ></ha-entity-picker>
         </div>
 
+        <!-- Multiple Entities (Text input list) -->
+        <div class="option">
+          <ha-textfield
+            label="Zusätzliche Entitäten (Kommagetrennt für mehrere)"
+            .value="${this._config?.entities?this._config.entities.join(", "):""}"
+            .configValue="${"entities"}"
+            @input="${this._entitiesChanged}"
+          ></ha-textfield>
+        </div>
+
         <!-- Card Title -->
         <div class="option">
           <ha-textfield
-            label="${yt("editor.title","","",t)}"
+            label="${me("editor.title","","",e)}"
             .value="${this._title}"
             .configValue="${"title"}"
             @input="${this._valueChanged}"
           ></ha-textfield>
         </div>
 
-        <!-- Layout Selector -->
+        <!-- Layout Style -->
         <div class="option">
           <ha-select
-            label="${yt("editor.layout","","",t)}"
+            label="${me("editor.layout","","",e)}"
             .value="${this._layout}"
             .configValue="${"layout"}"
             @selected="${this._valueChanged}"
-            @closed="${t=>t.stopPropagation()}"
+            @closed="${e=>e.stopPropagation()}"
           >
-            <mwc-list-item value="card">${yt("editor.layout_card","","",t)}</mwc-list-item>
-            <mwc-list-item value="row">${yt("editor.layout_row","","",t)}</mwc-list-item>
-            <mwc-list-item value="grid">${yt("editor.layout_grid","","",t)}</mwc-list-item>
+            <mwc-list-item value="card">${me("editor.layout_card","","",e)}</mwc-list-item>
+            <mwc-list-item value="row">${me("editor.layout_row","","",e)}</mwc-list-item>
+            <mwc-list-item value="grid">${me("editor.layout_grid","","",e)}</mwc-list-item>
           </ha-select>
         </div>
 
-        <!-- Threshold to Hide -->
-        <div class="option">
-          <ha-textfield
-            label="${yt("editor.hide_before","","",t)}"
-            type="number"
-            .value="${String(this._hide_before)}"
-            .configValue="${"hide_before"}"
-            @input="${this._valueChanged}"
-          ></ha-textfield>
+        <!-- Style customization headers -->
+        <div class="section-title">Farben für Termine & Icons</div>
+
+        <!-- Due colors -->
+        <div class="color-row">
+          <div class="color-picker-wrapper">
+            <span class="color-label">Heute fällig:</span>
+            <input 
+              type="color" 
+              .value="${this._due_color}" 
+              .configValue="${"due_color"}"
+              @input="${this._valueChanged}"
+            />
+          </div>
+          <div class="color-picker-wrapper">
+            <span class="color-label">Morgen fällig:</span>
+            <input 
+              type="color" 
+              .value="${this._due_1_color}" 
+              .configValue="${"due_1_color"}"
+              @input="${this._valueChanged}"
+            />
+          </div>
         </div>
 
-        <!-- Icon Customizations -->
         <div class="option">
           <ha-textfield
-            label="${yt("editor.icon_size","","",t)}"
+            label="${me("editor.icon_size","","",e)}"
             .value="${this._icon_size}"
             .configValue="${"icon_size"}"
             @input="${this._valueChanged}"
           ></ha-textfield>
         </div>
 
-        <!-- Color Customizations -->
-        <div class="option">
-          <ha-textfield
-            label="${yt("editor.due_color","","",t)}"
-            .value="${this._due_color}"
-            .configValue="${"due_color"}"
-            @input="${this._valueChanged}"
-          ></ha-textfield>
-        </div>
+        <!-- Detected Waste Types Custom Style Editor -->
+        ${t.length>0?B`
+              <div class="section-title">Müllsorten anpassen</div>
+              <div class="waste-customizer-list">
+                ${t.map(e=>this._renderWasteCustomizerRow(e))}
+              </div>
+            `:""}
 
-        <div class="option">
-          <ha-textfield
-            label="${yt("editor.due_1_color","","",t)}"
-            .value="${this._due_1_color}"
-            .configValue="${"due_1_color"}"
-            @input="${this._valueChanged}"
-          ></ha-textfield>
-        </div>
-
-        <div class="option">
-          <ha-textfield
-            label="${yt("editor.icon_color","","",t)}"
-            .value="${this._icon_color}"
-            .configValue="${"icon_color"}"
-            @input="${this._valueChanged}"
-          ></ha-textfield>
-        </div>
-
-        <!-- JSON Custom Mappings -->
-        <div class="option">
-          <ha-textarea
-            label="Custom Colors JSON (e.g. { \\"Bio\\": \\"green\\" })"
-            .value="${this._custom_colors_str}"
-            .configValue="${"custom_colors"}"
-            @input="${this._jsonChanged}"
-            rows="3"
-          ></ha-textarea>
-        </div>
-
-        <div class="option">
-          <ha-textarea
-            label="Custom Icons JSON (e.g. { \\"Bio\\": \\"mdi:leaf\\" })"
-            .value="${this._custom_icons_str}"
-            .configValue="${"custom_icons"}"
-            @input="${this._jsonChanged}"
-            rows="3"
-          ></ha-textarea>
-        </div>
-
-        <!-- Checkboxes -->
+        <!-- General switches -->
+        <div class="section-title">Anzeige-Optionen</div>
         <div class="toggles">
-          <ha-formfield .label="${yt("editor.hide_title","","",t)}">
+          <ha-formfield .label="${me("editor.hide_title","","",e)}">
             <ha-switch
               .checked="${!!this._config?.hide_title}"
               .configValue="${"hide_title"}"
@@ -335,7 +318,7 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             ></ha-switch>
           </ha-formfield>
 
-          <ha-formfield .label="${yt("editor.hide_date","","",t)}">
+          <ha-formfield .label="${me("editor.hide_date","","",e)}">
             <ha-switch
               .checked="${!!this._config?.hide_date}"
               .configValue="${"hide_date"}"
@@ -343,7 +326,7 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             ></ha-switch>
           </ha-formfield>
 
-          <ha-formfield .label="${yt("editor.hide_days","","",t)}">
+          <ha-formfield .label="${me("editor.hide_days","","",e)}">
             <ha-switch
               .checked="${!!this._config?.hide_days}"
               .configValue="${"hide_days"}"
@@ -351,7 +334,7 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             ></ha-switch>
           </ha-formfield>
 
-          <ha-formfield .label="${yt("editor.hide_icon","","",t)}">
+          <ha-formfield .label="${me("editor.hide_icon","","",e)}">
             <ha-switch
               .checked="${!!this._config?.hide_icon}"
               .configValue="${"hide_icon"}"
@@ -359,7 +342,7 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             ></ha-switch>
           </ha-formfield>
 
-          <ha-formfield .label="${yt("editor.hide_on_click","","",t)}">
+          <ha-formfield .label="${me("editor.hide_on_click","","",e)}">
             <ha-switch
               .checked="${!1!==this._config?.hide_on_click}"
               .configValue="${"hide_on_click"}"
@@ -367,7 +350,7 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             ></ha-switch>
           </ha-formfield>
 
-          <ha-formfield .label="${yt("editor.hide_on_today","","",t)}">
+          <ha-formfield .label="${me("editor.hide_on_today","","",e)}">
             <ha-switch
               .checked="${!!this._config?.hide_on_today}"
               .configValue="${"hide_on_today"}"
@@ -376,7 +359,42 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
           </ha-formfield>
         </div>
       </div>
-    `}_valueChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue;if(i){let t=e.value;"number"===e.type&&(t=Number(t)),this._config={...this._config,[i]:t},this._fireConfigChanged()}}_toggleChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue;i&&(this._config={...this._config,[i]:e.checked},this._fireConfigChanged())}_jsonChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue;if(i)try{const t=JSON.parse(e.value);this._config={...this._config,[i]:t},this._fireConfigChanged()}catch(t){}}_fireConfigChanged(){const t=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(t)}static{this.styles=a`
+    `}_renderWasteCustomizerRow(e){const t=this._getWasteIcon(e),i=this._getWasteColor(e),s=!be.some(e=>e.value===t);return B`
+      <div class="waste-row">
+        <div class="waste-type-header">${e}</div>
+        <div class="waste-inputs">
+          <!-- Color picker -->
+          <div class="color-picker-box">
+            <input 
+              type="color" 
+              .value="${i}" 
+              @input="${t=>this._customStyleChanged(e,"color",t.target.value)}"
+            />
+          </div>
+
+          <!-- Icon Selector Dropdown -->
+          <div class="icon-selector">
+            <select 
+              .value="${s?"custom":t}"
+              @change="${t=>this._customStyleChanged(e,"icon-select",t.target.value)}"
+            >
+              ${be.map(e=>B`<option value="${e.value}">${e.label}</option>`)}
+              <option value="custom">Custom Icon...</option>
+            </select>
+          </div>
+
+          <!-- Custom icon input (only if custom is selected) -->
+          <div class="custom-icon-input">
+            <input 
+              type="text" 
+              placeholder="mdi:trash-can" 
+              .value="${t}"
+              @input="${t=>this._customStyleChanged(e,"icon-text",t.target.value)}"
+            />
+          </div>
+        </div>
+      </div>
+    `}_customStyleChanged(e,t,i){if(this._config){if("color"===t){const t={...this._config.custom_colors||{}};t[e]=i,this._config={...this._config,custom_colors:t}}else if("icon-select"===t){if("custom"!==i){const t={...this._config.custom_icons||{}};t[e]=i,this._config={...this._config,custom_icons:t}}}else if("icon-text"===t){const t={...this._config.custom_icons||{}};t[e]=i,this._config={...this._config,custom_icons:t}}this._fireConfigChanged()}}_valueChanged(e){if(!this._config||!this.hass)return;const t=e.target,i=t.configValue;if(i){let e=t.value;"number"===t.type&&(e=Number(e)),this._config={...this._config,[i]:e},this._fireConfigChanged()}}_entitiesChanged(e){if(!this._config)return;const t=e.target.value.split(",").map(e=>e.trim()).filter(Boolean);this._config={...this._config,entities:t.length>0?t:void 0},this._fireConfigChanged()}_toggleChanged(e){if(!this._config||!this.hass)return;const t=e.target,i=t.configValue;i&&(this._config={...this._config,[i]:t.checked},this._fireConfigChanged())}_fireConfigChanged(){const e=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(e)}static{this.styles=a`
     .card-config {
       display: flex;
       flex-direction: column;
@@ -386,6 +404,81 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
       display: flex;
       flex-direction: column;
     }
+    .section-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 4px;
+      margin-top: 8px;
+    }
+    .color-row {
+      display: flex;
+      gap: 16px;
+    }
+    .color-picker-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .color-picker-wrapper input[type="color"] {
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: none;
+    }
+    .color-label {
+      font-size: 0.95rem;
+    }
+    .waste-customizer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .waste-row {
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .waste-type-header {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .waste-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .color-picker-box input[type="color"] {
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+    }
+    .icon-selector select {
+      background: var(--card-background-color, #1e1e1e);
+      color: var(--primary-text-color, #fff);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 6px;
+      min-width: 140px;
+    }
+    .custom-icon-input input {
+      background: var(--card-background-color, #1e1e1e);
+      color: var(--primary-text-color, #fff);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 6px;
+      width: 130px;
+    }
     ha-select, ha-textfield, ha-textarea, ha-entity-picker {
       width: 100%;
     }
@@ -393,39 +486,38 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      margin-top: 8px;
     }
     ha-formfield {
       display: flex;
       align-items: center;
     }
-  `}};function $t(t){let e=t.trim();if(e.startsWith("var("))return"244, 67, 54";e=e.replace("#",""),3===e.length&&(e=e[0]+e[0]+e[1]+e[1]+e[2]+e[2]);const i=parseInt(e,16);return isNaN(i)?"244, 67, 54":`${i>>16&255}, ${i>>8&255}, ${255&i}`}t([ft({attribute:!1}),e("design:type",Object)],mt.prototype,"hass",void 0),t([gt(),e("design:type",Object)],mt.prototype,"_config",void 0),mt=t([lt("waste-collection-schedule-card-editor")],mt);let bt=class extends ct{static get styles(){return pt}static getConfigElement(){return document.createElement("waste-collection-schedule-card-editor")}static getStubConfig(){return{entity:"",title:"Müllabfuhr",layout:"card",hide_before:-1}}setConfig(t){if(!t)throw new Error("Invalid configuration");this.config={layout:"card",hide_before:-1,hide_date:!1,hide_days:!1,hide_dow:!0,hide_icon:!1,hide_on_click:!0,hide_on_today:!1,hide_title:!1,due_color:"#f44336",due_1_color:"#ff9800",icon_color:"var(--primary-text-color)",...t}}shouldUpdate(t){if(t.has("config"))return!0;const e=t.get("hass");if(e){const t=this._getEntities();for(const i of t)if(e.states[i]!==this.hass.states[i])return!0;return!1}return!0}_getEntities(){const t=[];return this.config.entity&&t.push(this.config.entity),this.config.entities&&Array.isArray(this.config.entities)&&t.push(...this.config.entities),[...new Set(t)]}_getWasteIcon(t){if(this.config.custom_icons){const e=t.toLowerCase();for(const[t,i]of Object.entries(this.config.custom_icons))if(e.includes(t.toLowerCase()))return i}const e=t.toLowerCase();return e.includes("bio")||e.includes("organ")||e.includes("braun")?"mdi:leaf":e.includes("papier")||e.includes("pappe")||e.includes("blau")?"mdi:package-variant":e.includes("gelb")||e.includes("plastik")||e.includes("recycle")||e.includes("wertstoff")?"mdi:recycle":e.includes("rest")||e.includes("hausmüll")||e.includes("grau")||e.includes("schwarz")?"mdi:trash-can":e.includes("glas")||e.includes("flasche")?"mdi:glass-fragile":e.includes("schadstoff")||e.includes("gift")||e.includes("chem")?"mdi:biohazard":e.includes("sperr")?"mdi:sofa":e.includes("tanne")||e.includes("baum")||e.includes("weihnacht")?"mdi:pine-tree":"mdi:trash-can-outline"}_getWasteColor(t){if(this.config.custom_colors){const e=t.toLowerCase();for(const[t,i]of Object.entries(this.config.custom_colors))if(e.includes(t.toLowerCase()))return i}const e=t.toLowerCase();return e.includes("bio")||e.includes("organ")||e.includes("braun")?"#4caf50":e.includes("papier")||e.includes("pappe")||e.includes("blau")?"#2196f3":e.includes("gelb")||e.includes("plastik")||e.includes("recycle")||e.includes("wertstoff")?"#fbc02d":e.includes("rest")||e.includes("hausmüll")||e.includes("grau")||e.includes("schwarz")?"#707070":e.includes("glas")||e.includes("flasche")?"#00bcd4":e.includes("schadstoff")||e.includes("gift")||e.includes("chem")?"#9c27b0":e.includes("sperr")?"#795548":e.includes("tanne")||e.includes("baum")||e.includes("weihnacht")?"#009688":this.config.icon_color||"var(--primary-text-color)"}_parseEntities(){const t=[],e=this._getEntities();for(const i of e){const e=this.hass.states[i];if(!e)continue;const s=e.attributes;if(s.wastes&&Array.isArray(s.wastes))for(const o of s.wastes){const s=Number(o.daysTo);if(isNaN(s))continue;const r=o.date,n=o.type||e.attributes.friendly_name||"Müll",a=0===s,c=1===s,d=`wcs_ack_${i}_${n}_${r}`,l="true"===localStorage.getItem(d);t.push({entityId:i,friendlyName:n,daysTo:s,dateText:r,types:[n],icon:this._getWasteIcon(n),color:this._getWasteColor(n),isToday:a,isTomorrow:c,isAcknowledged:l})}else{let o=Number(e.state);if(isNaN(o)&&void 0!==s.daysTo&&(o=Number(s.daysTo)),isNaN(o))continue;const r=s.friendly_name||i,n=s.types||[r],a=n[0]||r,c=s.dateText||"",d=0===o,l=1===o,h=`wcs_ack_${i}_${a}_${c}`,u="true"===localStorage.getItem(h);t.push({entityId:i,friendlyName:r,daysTo:o,dateText:c,types:n,icon:this._getWasteIcon(a),color:this._getWasteColor(a),isToday:d,isTomorrow:l,isAcknowledged:u})}}return t.sort((t,e)=>t.daysTo-e.daysTo)}_acknowledge(t){if(!this.config.hide_on_click)return;if(!t.isToday&&!t.isTomorrow)return;const e=`wcs_ack_${t.entityId}_${t.types[0]||t.friendlyName}_${t.dateText}`;localStorage.setItem(e,"true"),this.requestUpdate()}render(){if(!this.hass)return null;const t=this._parseEntities(),e=this.config.language||this.hass.language||"en",i=t.filter(t=>!t.isAcknowledged&&((!this.config.hide_on_today||!t.isToday)&&!(void 0!==this.config.hide_before&&this.config.hide_before>-1&&t.daysTo>this.config.hide_before)));if(0===i.length)return W``;const s=this.config.due_color||"#f44336",o=this.config.due_1_color||"#ff9800";return W`
+  `}};function ve(e){let t=e.trim();if(t.startsWith("var("))return"244, 67, 54";t=t.replace("#",""),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]);const i=parseInt(t,16);return isNaN(i)?"244, 67, 54":`${i>>16&255}, ${i>>8&255}, ${255&i}`}function xe(e){if(!e)return null;let t=e.match(/(\d{4})-(\d{2})-(\d{2})/);return t?new Date(Number(t[1]),Number(t[2])-1,Number(t[3])):(t=e.match(/(\d{2})\.(\d{2})\.(\d{4})/),t?new Date(Number(t[3]),Number(t[2])-1,Number(t[1])):(t=e.match(/(\d{2})\/(\d{2})\/(\d{4})/),t?new Date(Number(t[3]),Number(t[1])-1,Number(t[2])):null))}function Ae(e,t){const i=new Date(e.getFullYear(),e.getMonth(),e.getDate()),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),o=i.getTime()-s.getTime();return Math.ceil(o/864e5)}function Ce(e){return e.replace(/Waste Collection Schedule\s*/gi,"").trim()}e([pe({attribute:!1}),t("design:type",Object)],we.prototype,"hass",void 0),e([ge(),t("design:type",Object)],we.prototype,"_config",void 0),we=e([de("waste-collection-schedule-card-editor")],we);let Se=class extends ce{static get styles(){return fe}static getConfigElement(){return document.createElement("waste-collection-schedule-card-editor")}static getStubConfig(){return{entity:"",title:"Müllabfuhr",layout:"card",hide_before:-1}}setConfig(e){if(!e)throw new Error("Invalid configuration");this.config={layout:"card",hide_before:-1,hide_date:!1,hide_days:!1,hide_dow:!0,hide_icon:!1,hide_on_click:!0,hide_on_today:!1,hide_title:!1,due_color:"#f44336",due_1_color:"#ff9800",icon_color:"var(--primary-text-color)",...e}}shouldUpdate(e){if(e.has("config"))return!0;const t=e.get("hass");if(t){const e=this._getEntities();for(const i of e)if(t.states[i]!==this.hass.states[i])return!0;return!1}return!0}_getEntities(){const e=[];return this.config.entity&&e.push(this.config.entity),this.config.entities&&Array.isArray(this.config.entities)&&e.push(...this.config.entities),[...new Set(e)]}_getWasteIcon(e){if(this.config.custom_icons){const t=e.toLowerCase();for(const[e,i]of Object.entries(this.config.custom_icons))if(t.includes(e.toLowerCase()))return i}const t=e.toLowerCase();return t.includes("bio")||t.includes("organ")||t.includes("braun")||t.includes("garten")?"mdi:leaf":t.includes("papier")||t.includes("pappe")||t.includes("blau")?"mdi:package-variant":t.includes("gelb")||t.includes("plastik")||t.includes("recycle")||t.includes("wertstoff")?"mdi:recycle":t.includes("rest")||t.includes("hausmüll")||t.includes("grau")||t.includes("schwarz")?"mdi:trash-can":t.includes("glas")||t.includes("flasche")?"mdi:glass-fragile":t.includes("schadstoff")||t.includes("gift")||t.includes("chem")?"mdi:biohazard":t.includes("sperr")?"mdi:sofa":t.includes("tanne")||t.includes("baum")||t.includes("weihnacht")?"mdi:pine-tree":"mdi:trash-can-outline"}_getWasteColor(e){if(this.config.custom_colors){const t=e.toLowerCase();for(const[e,i]of Object.entries(this.config.custom_colors))if(t.includes(e.toLowerCase()))return i}const t=e.toLowerCase();return t.includes("bio")||t.includes("organ")||t.includes("braun")||t.includes("garten")?"#4caf50":t.includes("papier")||t.includes("pappe")||t.includes("blau")?"#2196f3":t.includes("gelb")||t.includes("plastik")||t.includes("recycle")||t.includes("wertstoff")?"#fbc02d":t.includes("rest")||t.includes("hausmüll")||t.includes("grau")||t.includes("schwarz")?"#707070":t.includes("glas")||t.includes("flasche")?"#00bcd4":t.includes("schadstoff")||t.includes("gift")||t.includes("chem")?"#9c27b0":t.includes("sperr")?"#795548":t.includes("tanne")||t.includes("baum")||t.includes("weihnacht")?"#009688":this.config.icon_color||"var(--primary-text-color)"}_parseEntities(){const e=[],t=this._getEntities(),i=new Date;for(const s of t){const t=this.hass.states[s];if(!t)continue;const o=t.attributes,r=Ce(o.friendly_name||s.split(".").pop()||"Müll");let n=!1;if(o.wastes&&Array.isArray(o.wastes))for(const t of o.wastes){const i=Number(t.daysTo);if(isNaN(i))continue;const o=t.date,a=Ce(t.type||r),c=0===i,l=1===i,d=`wcs_ack_${s}_${a}_${o}`,h="true"===localStorage.getItem(d);e.push({entityId:s,friendlyName:a,daysTo:i,dateText:o,types:[a],icon:this._getWasteIcon(a),color:this._getWasteColor(a),isToday:c,isTomorrow:l,isAcknowledged:h}),n=!0}for(const[t,r]of Object.entries(o)){const o=xe(t);if(o){const a=Ae(o,i);if(a<0)continue;const c=Ce(String(r)),l=t,d=0===a,h=1===a,u=`wcs_ack_${s}_${c}_${l}`,p="true"===localStorage.getItem(u);e.some(e=>e.entityId===s&&e.friendlyName===c&&e.dateText===l)||(e.push({entityId:s,friendlyName:c,daysTo:a,dateText:l,types:[c],icon:this._getWasteIcon(c),color:this._getWasteColor(c),isToday:d,isTomorrow:h,isAcknowledged:p}),n=!0)}}if(!n){let n=Number(t.state),a=o.dateText||"",c=r;if(isNaN(n)){const e=xe(t.state);e&&(n=Ae(e,i),a=t.state.replace(/^on\s+\w+,\s+/i,""))}if(!isNaN(n)&&n>=0){const t=0===n,i=1===n,o=`wcs_ack_${s}_${c}_${a}`,r="true"===localStorage.getItem(o);e.push({entityId:s,friendlyName:c,daysTo:n,dateText:a,types:[c],icon:this._getWasteIcon(c),color:this._getWasteColor(c),isToday:t,isTomorrow:i,isAcknowledged:r})}}}return e.sort((e,t)=>e.daysTo-t.daysTo)}_acknowledge(e){if(!this.config.hide_on_click)return;if(!e.isToday&&!e.isTomorrow)return;const t=`wcs_ack_${e.entityId}_${e.types[0]||e.friendlyName}_${e.dateText}`;localStorage.setItem(t,"true"),this.requestUpdate()}render(){if(!this.hass)return null;const e=this._parseEntities(),t=this.config.language||this.hass.language||"en",i=e.filter(e=>!e.isAcknowledged&&((!this.config.hide_on_today||!e.isToday)&&!(void 0!==this.config.hide_before&&this.config.hide_before>-1&&e.daysTo>this.config.hide_before)));if(0===i.length)return B``;const s=this.config.due_color||"#f44336",o=this.config.due_1_color||"#ff9800";return B`
       <div 
         class="wcs-card ${this.config.layout?`layout-${this.config.layout}`:""}"
         style="
-          --rgb-due-color: ${$t(s)};
-          --rgb-due-1-color: ${$t(o)};
+          --rgb-due-color: ${ve(s)};
+          --rgb-due-1-color: ${ve(o)};
         "
       >
-        ${!this.config.hide_title&&this.config.title?W`
+        ${!this.config.hide_title&&this.config.title?B`
               <div class="wcs-header" style="${this.config.title_size?`font-size: ${this.config.title_size};`:""}">
                 ${this.config.title}
               </div>
             `:""}
 
         <div class="wcs-container ${this.config.layout?`layout-${this.config.layout}`:""}">
-          ${i.map(t=>this._renderItem(t,e))}
+          ${i.map(e=>this._renderItem(e,t))}
         </div>
       </div>
-    `}_renderItem(t,e){let i="";i=t.isToday?yt("state.today","","",e):t.isTomorrow?yt("state.tomorrow","","",e):1===t.daysTo?yt("state.1_day","","",e):yt("state.in_days","{days}",String(t.daysTo),e);let s=t.color;t.isToday&&this.config.due_color?s=this.config.due_color:t.isTomorrow&&this.config.due_1_color&&(s=this.config.due_1_color);const o=["wcs-item",this.config.layout?`layout-${this.config.layout}`:"",t.isToday?"due-today":"",t.isTomorrow?"due-tomorrow":""].filter(Boolean).join(" ");return W`
+    `}_renderItem(e,t){let i="";i=e.isToday?me("state.today","","",t):e.isTomorrow?me("state.tomorrow","","",t):1===e.daysTo?me("state.1_day","","",t):me("state.in_days","{days}",String(e.daysTo),t);let s=e.color;e.isToday&&this.config.due_color?s=this.config.due_color:e.isTomorrow&&this.config.due_1_color&&(s=this.config.due_1_color);const o=["wcs-item",this.config.layout?`layout-${this.config.layout}`:"",e.isToday?"due-today":"",e.isTomorrow?"due-tomorrow":""].filter(Boolean).join(" ");return B`
       <div 
         class="${o}"
-        @click="${()=>this._acknowledge(t)}"
+        @click="${()=>this._acknowledge(e)}"
       >
-        ${this.config.hide_icon?"":W`
+        ${this.config.hide_icon?"":B`
               <div class="wcs-icon-wrapper ${this.config.layout?`layout-${this.config.layout}`:""}">
                 <ha-icon
-                  icon="${t.icon}"
+                  icon="${e.icon}"
                   style="
                     color: ${s};
                     --mdc-icon-size: ${this.config.icon_size||"30px"};
@@ -441,21 +533,21 @@ function t(t,e,i,s){var o,r=arguments.length,n=r<3?e:null===s?s=Object.getOwnPro
             class="wcs-name ${this.config.layout?`layout-${this.config.layout}`:""}"
             style="${this.config.title_size?`font-size: ${this.config.title_size};`:""}"
           >
-            ${t.friendlyName}
+            ${e.friendlyName}
           </div>
           
           <div 
             class="wcs-details ${this.config.layout?`layout-${this.config.layout}`:""}"
             style="${this.config.details_size?`font-size: ${this.config.details_size};`:""}"
           >
-            ${!this.config.hide_date&&t.dateText?W`<span class="wcs-date">${t.dateText}</span>`:""}
+            ${!this.config.hide_date&&e.dateText?B`<span class="wcs-date">${e.dateText}</span>`:""}
             
-            ${this.config.hide_days?"":W`
-                  <span class="wcs-badge ${t.isToday?"today":t.isTomorrow?"tomorrow":"upcoming"}">
+            ${this.config.hide_days?"":B`
+                  <span class="wcs-badge ${e.isToday?"today":e.isTomorrow?"tomorrow":"upcoming"}">
                     ${i}
                   </span>
                 `}
           </div>
         </div>
       </div>
-    `}};t([ft({attribute:!1}),e("design:type",Object)],bt.prototype,"hass",void 0),t([gt(),e("design:type",Object)],bt.prototype,"config",void 0),bt=t([lt("waste-collection-schedule-card")],bt),window.customCards=window.customCards||[],window.customCards.push({type:"waste-collection-schedule-card",name:"Waste Collection Schedule Card",description:"A modern Lovelace card for Home Assistant waste collection schedules.",preview:!0});export{bt as WasteCollectionScheduleCard};
+    `}};e([pe({attribute:!1}),t("design:type",Object)],Se.prototype,"hass",void 0),e([ge(),t("design:type",Object)],Se.prototype,"config",void 0),Se=e([de("waste-collection-schedule-card")],Se),window.customCards=window.customCards||[],window.customCards.push({type:"waste-collection-schedule-card",name:"Waste Collection Schedule Card",description:"A modern Lovelace card for Home Assistant waste collection schedules.",preview:!0});export{Se as WasteCollectionScheduleCard};
