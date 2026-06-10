@@ -207,6 +207,8 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
           <ha-select
             .value="${this._layout}"
             .configValue="${'layout'}"
+            @selected="${this._valueChanged}"
+            @change="${this._valueChanged}"
             @value-changed="${this._valueChanged}"
             @closed="${(ev: Event) => ev.stopPropagation()}"
           >
@@ -446,7 +448,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
-    const target = ev.target;
+    const target = ev.currentTarget || ev.target;
     const configValue = target.configValue || target.getAttribute('configValue');
     
     if (configValue) {
@@ -467,7 +469,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
-    const target = ev.target;
+    const target = ev.currentTarget || ev.target;
     const configValue = target.configValue || target.getAttribute('configValue');
     if (configValue) {
       this._config = {
@@ -482,7 +484,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     if (!this._config || !this.hass) {
       return;
     }
-    const target = ev.target;
+    const target = ev.currentTarget || ev.target;
     const configValue = target.configValue || target.getAttribute('configValue');
     if (configValue) {
       this._config = {
