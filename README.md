@@ -4,6 +4,10 @@ A modern, high-quality, and highly customizable Home Assistant Lovelace custom c
 
 This card is designed to integrate seamlessly with the popular [HACS Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule) component.
 
+<img width="501" height="682" alt="image" src="https://github.com/user-attachments/assets/a795b6cd-4b16-4182-996e-9c3aa07a71ad" />
+<img width="501" height="647" alt="image" src="https://github.com/user-attachments/assets/8b83b31f-9cbe-4d1b-84c3-a718fac5f768" />
+<img width="481" height="385" alt="image" src="https://github.com/user-attachments/assets/806ee867-1a79-40ed-84e6-086bcb9381ea" />
+
 ---
 
 ## Features
