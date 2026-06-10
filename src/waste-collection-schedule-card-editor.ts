@@ -207,12 +207,12 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
           <ha-select
             .value="${this._layout}"
             .configValue="${'layout'}"
-            @change="${this._valueChanged}"
+            @value-changed="${this._valueChanged}"
             @closed="${(ev: Event) => ev.stopPropagation()}"
           >
-            <mwc-list-item value="card">${localize('editor.layout_card', '', '', lang)}</mwc-list-item>
-            <mwc-list-item value="row">${localize('editor.layout_row', '', '', lang)}</mwc-list-item>
-            <mwc-list-item value="grid">${localize('editor.layout_grid', '', '', lang)}</mwc-list-item>
+            <ha-list-item value="card">${localize('editor.layout_card', '', '', lang)}</ha-list-item>
+            <ha-list-item value="row">${localize('editor.layout_row', '', '', lang)}</ha-list-item>
+            <ha-list-item value="grid">${localize('editor.layout_grid', '', '', lang)}</ha-list-item>
           </ha-select>
         </div>
 
@@ -450,7 +450,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     const configValue = target.configValue || target.getAttribute('configValue');
     
     if (configValue) {
-      let value = target.value;
+      let value = ev.detail?.value !== undefined ? ev.detail.value : target.value;
       if (configValue === 'max_items' || configValue === 'hide_before') {
         value = Number(value);
         if (isNaN(value)) value = undefined;

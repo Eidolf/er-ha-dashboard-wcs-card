@@ -257,12 +257,12 @@ function t(t,e,i,s){var o,n=arguments.length,r=n<3?e:null===s?s=Object.getOwnPro
           <ha-select
             .value="${this._layout}"
             .configValue="${"layout"}"
-            @change="${this._valueChanged}"
+            @value-changed="${this._valueChanged}"
             @closed="${t=>t.stopPropagation()}"
           >
-            <mwc-list-item value="card">${mt("editor.layout_card","","",t)}</mwc-list-item>
-            <mwc-list-item value="row">${mt("editor.layout_row","","",t)}</mwc-list-item>
-            <mwc-list-item value="grid">${mt("editor.layout_grid","","",t)}</mwc-list-item>
+            <ha-list-item value="card">${mt("editor.layout_card","","",t)}</ha-list-item>
+            <ha-list-item value="row">${mt("editor.layout_row","","",t)}</ha-list-item>
+            <ha-list-item value="grid">${mt("editor.layout_grid","","",t)}</ha-list-item>
           </ha-select>
         </div>
 
@@ -423,7 +423,7 @@ function t(t,e,i,s){var o,n=arguments.length,r=n<3?e:null===s?s=Object.getOwnPro
           </div>
         </div>
       </div>
-    `}_customStyleChanged(t,e,i){if(this._config){if("color"===e){const e={...this._config.custom_colors||{}};e[t]=i,this._config={...this._config,custom_colors:e}}else if("icon-select"===e){if("custom"!==i){const e={...this._config.custom_icons||{}};e[t]=i,this._config={...this._config,custom_icons:e}}}else if("icon-text"===e){const e={...this._config.custom_icons||{}};e[t]=i,this._config={...this._config,custom_icons:e}}this._fireConfigChanged()}}_entityChanged(t,e){if(!this._config)return;const i=e.detail.value,s=[...this._entitiesList];i?s[t]=i:s.splice(t,1),this._updateEntities(s)}_addEntity(){const t=[...this._entitiesList,""];this._updateEntities(t)}_removeEntity(t){const e=[...this._entitiesList];e.splice(t,1),this._updateEntities(e)}_updateEntities(t){this._config={...this._config,entity:void 0,entities:t.length>0?t:void 0},this._fireConfigChanged()}_valueChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");if(i){let t=e.value;"max_items"!==i&&"hide_before"!==i||(t=Number(t),isNaN(t)&&(t=void 0)),this._config={...this._config,[i]:t},this._fireConfigChanged()}}_toggleChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");i&&(this._config={...this._config,[i]:e.checked},this._fireConfigChanged())}_toggleInvertedChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");i&&(this._config={...this._config,[i]:!e.checked},this._fireConfigChanged())}_fireConfigChanged(){const t=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(t)}static{this.styles=a`
+    `}_customStyleChanged(t,e,i){if(this._config){if("color"===e){const e={...this._config.custom_colors||{}};e[t]=i,this._config={...this._config,custom_colors:e}}else if("icon-select"===e){if("custom"!==i){const e={...this._config.custom_icons||{}};e[t]=i,this._config={...this._config,custom_icons:e}}}else if("icon-text"===e){const e={...this._config.custom_icons||{}};e[t]=i,this._config={...this._config,custom_icons:e}}this._fireConfigChanged()}}_entityChanged(t,e){if(!this._config)return;const i=e.detail.value,s=[...this._entitiesList];i?s[t]=i:s.splice(t,1),this._updateEntities(s)}_addEntity(){const t=[...this._entitiesList,""];this._updateEntities(t)}_removeEntity(t){const e=[...this._entitiesList];e.splice(t,1),this._updateEntities(e)}_updateEntities(t){this._config={...this._config,entity:void 0,entities:t.length>0?t:void 0},this._fireConfigChanged()}_valueChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");if(i){let s=void 0!==t.detail?.value?t.detail.value:e.value;"max_items"!==i&&"hide_before"!==i||(s=Number(s),isNaN(s)&&(s=void 0)),this._config={...this._config,[i]:s},this._fireConfigChanged()}}_toggleChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");i&&(this._config={...this._config,[i]:e.checked},this._fireConfigChanged())}_toggleInvertedChanged(t){if(!this._config||!this.hass)return;const e=t.target,i=e.configValue||e.getAttribute("configValue");i&&(this._config={...this._config,[i]:!e.checked},this._fireConfigChanged())}_fireConfigChanged(){const t=new CustomEvent("config-changed",{detail:{config:this._config},bubbles:!0,composed:!0});this.dispatchEvent(t)}static{this.styles=a`
     .card-config {
       display: flex;
       flex-direction: column;
