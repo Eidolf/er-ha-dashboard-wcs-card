@@ -48,10 +48,6 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     return this._config?.layout || 'card';
   }
 
-  get _source_type(): string {
-    return this._config?.source_type || 'sensor';
-  }
-
   get _hide_before(): number {
     return this._config?.hide_before ?? -1;
   }
@@ -172,36 +168,15 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
 
     return html`
       <div class="card-config">
-        <!-- Source Type Selection -->
-        <div class="section-title">${localize('editor.source_type', '', '', lang)}</div>
-        <div class="option">
-          <ha-select
-            .value="${this._source_type}"
-            .configValue="${'source_type'}"
-            .options="${[
-              { label: localize('editor.source_sensor', '', '', lang), value: 'sensor' },
-              { label: localize('editor.source_calendar', '', '', lang), value: 'calendar' }
-            ]}"
-            @selected="${this._valueChanged}"
-            @change="${this._valueChanged}"
-            @value-changed="${this._valueChanged}"
-            @closed="${(ev: Event) => ev.stopPropagation()}"
-          >
-          </ha-select>
-        </div>
-
         <!-- Multiple Entities Picker List -->
         <div class="option">
-          <div class="section-title">
-            ${this._source_type === 'calendar' ? 'Müllkalender (Entitäten)' : 'Müllsensoren (Entitäten)'}
-          </div>
+          <div class="section-title">Müllsensoren (Entitäten)</div>
           <div class="entities-list">
             ${entities.map((entityId, index) => html`
               <div class="entity-row">
                 <ha-entity-picker
                   .hass="${this.hass}"
                   .value="${entityId}"
-                  .domainFilter="${this._source_type === 'calendar' ? 'calendar' : 'sensor'}"
                   @value-changed="${(ev: any) => this._entityChanged(index, ev)}"
                   allow-custom-entity
                 ></ha-entity-picker>
@@ -212,7 +187,7 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
             `)}
           </div>
           <button class="add-btn" @click="${this._addEntity}">
-            <ha-icon icon="mdi:plus"></ha-icon> ${this._source_type === 'calendar' ? 'Kalender hinzufügen' : 'Sensor hinzufügen'}
+            <ha-icon icon="mdi:plus"></ha-icon> Sensor hinzufügen
           </button>
         </div>
 
