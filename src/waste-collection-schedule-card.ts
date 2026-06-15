@@ -58,6 +58,8 @@ function cleanWasteName(name: string): string {
 export class WasteCollectionScheduleCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: WCSCardConfig;
+  @state() private _calendarEvents: any[] = [];
+  private _calendarTimer?: any;
 
   public static get styles() {
     return styles;
@@ -100,8 +102,69 @@ export class WasteCollectionScheduleCard extends LitElement {
     };
   }
 
+  public connectedCallback(): void {
+    super.connectedCallback();
+    this._startCalendarTimer();
+  }
+
+  public disconnectedCallback(): void {
+    this._stopCalendarTimer();
+    super.disconnectedCallback();
+  }
+
+  private _startCalendarTimer(): void {
+    this._stopCalendarTimer();
+    this._fetchCalendarEvents();
+    this._calendarTimer = setInterval(() => this._fetchCalendarEvents(), 900000);
+  }
+
+  private _stopCalendarTimer(): void {
+    if (this._calendarTimer) {
+      clearInterval(this._calendarTimer);
+      this._calendarTimer = undefined;
+    }
+  }
+
+  private async _fetchCalendarEvents(): Promise<void> {
+    if (!this.hass || !this.config || this.config.source_type !== 'calendar') {
+      return;
+    }
+    const entities = this._getEntities().filter(id => id.startsWith('calendar.'));
+    if (entities.length === 0) {
+      this._calendarEvents = [];
+      return;
+    }
+
+    const today = new Date();
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const end = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    const allEvents: any[] = [];
+    for (const entityId of entities) {
+      try {
+        const events = await this.hass.callWS<any[]>({
+          type: 'calendar/event/list',
+          entity_id: entityId,
+          start_date_time: start.toISOString(),
+          end_date_time: end.toISOString()
+        });
+        if (events && Array.isArray(events)) {
+          for (const event of events) {
+            allEvents.push({
+              entityId,
+              event
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching calendar events for " + entityId, err);
+      }
+    }
+    this._calendarEvents = allEvents;
+  }
+
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('config')) {
+    if (changedProps.has('config') || changedProps.has('_calendarEvents')) {
       return true;
     }
     const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
@@ -115,6 +178,33 @@ export class WasteCollectionScheduleCard extends LitElement {
       return false;
     }
     return true;
+  }
+
+  protected updated(changedProps: PropertyValues): void {
+    super.updated(changedProps);
+    
+    let shouldFetch = false;
+    if (changedProps.has('config')) {
+      shouldFetch = true;
+    }
+    if (changedProps.has('hass')) {
+      const oldHass = changedProps.get('hass') as HomeAssistant | undefined;
+      if (!oldHass) {
+        shouldFetch = true;
+      } else {
+        const entities = this._getEntities();
+        for (const entity of entities) {
+          if (oldHass.states[entity] !== this.hass.states[entity]) {
+            shouldFetch = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (shouldFetch) {
+      this._fetchCalendarEvents();
+    }
   }
 
   private _getEntities(): string[] {
@@ -208,63 +298,74 @@ export class WasteCollectionScheduleCard extends LitElement {
 
   private _parseEntities(): WasteCollectionInfo[] {
     const list: WasteCollectionInfo[] = [];
-    const entities = this._getEntities();
-    const today = new Date();
+    const lang = this.config.language || this.hass.language || 'en';
 
-    for (const entityId of entities) {
-      const stateObj = this.hass.states[entityId] as HassEntity | undefined;
-      if (!stateObj) continue;
+    if (this.config.source_type === 'calendar') {
+      const today = new Date();
+      const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-      const attrs = stateObj.attributes;
-      const friendlyName = cleanWasteName(attrs.friendly_name || entityId.split('.').pop() || 'Müll');
+      for (const item of this._calendarEvents) {
+        const { entityId, event } = item;
+        const startStr = event.start.dateTime || event.start.date;
+        const parsedDate = parseDateString(startStr);
+        if (!parsedDate) continue;
 
-      let parsedAny = false;
+        const parsedDateMidnight = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate());
+        const daysTo = calculateDaysDifference(parsedDateMidnight, todayMidnight);
+        if (daysTo < 0) continue;
 
-      // 1. Check if the entity contains multiple wastes in `wastes` array attribute
-      if (attrs.wastes && Array.isArray(attrs.wastes)) {
-        for (const wasteItem of attrs.wastes) {
-          const daysTo = Number(wasteItem.daysTo);
-          if (isNaN(daysTo)) continue;
+        const wasteType = cleanWasteName(event.summary || 'Müll');
+        const isToday = daysTo === 0;
+        const isTomorrow = daysTo === 1;
+        const ackKey = `wcs_ack_${entityId}_${wasteType}_${startStr}`;
+        const isAcknowledged = localStorage.getItem(ackKey) === 'true';
 
-          const dateStr = wasteItem.date;
-          const wasteType = cleanWasteName(wasteItem.type || friendlyName);
-          
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
-
-          list.push({
-            entityId,
-            friendlyName: wasteType,
-            daysTo,
-            dateText: dateStr,
-            types: [wasteType],
-            icon: this._getWasteIcon(wasteType),
-            color: this._getWasteColor(wasteType),
-            isToday,
-            isTomorrow,
-            isAcknowledged,
-          });
-          parsedAny = true;
+        let dateText = startStr.split('T')[0];
+        const match = dateText.match(/(\d{4})-(\d{2})-(\d{2})/);
+        if (match && lang.startsWith('de')) {
+          dateText = `${match[3]}.${match[2]}.${match[1]}`;
         }
+
+        list.push({
+          entityId,
+          friendlyName: wasteType,
+          daysTo,
+          dateText,
+          types: [wasteType],
+          icon: this._getWasteIcon(wasteType),
+          color: this._getWasteColor(wasteType),
+          isToday,
+          isTomorrow,
+          isAcknowledged,
+        });
       }
+    } else {
+      const entities = this._getEntities();
+      const today = new Date();
 
-      // 2. Scan all attribute keys for dates (e.g. "2026-06-17": "Biotonne")
-      for (const [key, val] of Object.entries(attrs)) {
-        const parsedDate = parseDateString(key);
-        if (parsedDate) {
-          const daysTo = calculateDaysDifference(parsedDate, today);
-          if (daysTo < 0) continue; // Skip past collections
+      for (const entityId of entities) {
+        const stateObj = this.hass.states[entityId] as HassEntity | undefined;
+        if (!stateObj) continue;
 
-          const wasteType = cleanWasteName(String(val));
-          const dateStr = key;
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+        const attrs = stateObj.attributes;
+        const friendlyName = cleanWasteName(attrs.friendly_name || entityId.split('.').pop() || 'Müll');
 
-          if (!list.some(item => item.entityId === entityId && item.friendlyName === wasteType && item.dateText === dateStr)) {
+        let parsedAny = false;
+
+        // 1. Check if the entity contains multiple wastes in wastes array attribute
+        if (attrs.wastes && Array.isArray(attrs.wastes)) {
+          for (const wasteItem of attrs.wastes) {
+            const daysTo = Number(wasteItem.daysTo);
+            if (isNaN(daysTo)) continue;
+
+            const dateStr = wasteItem.date;
+            const wasteType = cleanWasteName(wasteItem.type || friendlyName);
+            
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
             list.push({
               entityId,
               friendlyName: wasteType,
@@ -280,41 +381,72 @@ export class WasteCollectionScheduleCard extends LitElement {
             parsedAny = true;
           }
         }
-      }
 
-      // 3. Fallback: Parse state itself
-      if (!parsedAny) {
-        let daysTo = Number(stateObj.state);
-        let dateText = attrs.dateText || '';
-        let wasteType = friendlyName;
-
-        // If not a number, try parsing state as a date string (e.g. "on Wed, 17.06.2026")
-        if (isNaN(daysTo)) {
-          const parsedDate = parseDateString(stateObj.state);
+        // 2. Scan all attribute keys for dates (e.g. "2026-06-17": "Biotonne")
+        for (const [key, val] of Object.entries(attrs)) {
+          const parsedDate = parseDateString(key);
           if (parsedDate) {
-            daysTo = calculateDaysDifference(parsedDate, today);
-            dateText = stateObj.state.replace(/^on\s+\w+,\s+/i, ''); // clean prefix like "on Wed, "
+            const daysTo = calculateDaysDifference(parsedDate, today);
+            if (daysTo < 0) continue;
+
+            const wasteType = cleanWasteName(String(val));
+            const dateStr = key;
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
+            if (!list.some(item => item.entityId === entityId && item.friendlyName === wasteType && item.dateText === dateStr)) {
+              list.push({
+                entityId,
+                friendlyName: wasteType,
+                daysTo,
+                dateText: dateStr,
+                types: [wasteType],
+                icon: this._getWasteIcon(wasteType),
+                color: this._getWasteColor(wasteType),
+                isToday,
+                isTomorrow,
+                isAcknowledged,
+              });
+              parsedAny = true;
+            }
           }
         }
 
-        if (!isNaN(daysTo) && daysTo >= 0) {
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateText}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+        // 3. Fallback: Parse state itself
+        if (!parsedAny) {
+          let daysTo = Number(stateObj.state);
+          let dateText = attrs.dateText || '';
+          let wasteType = friendlyName;
 
-          list.push({
-            entityId,
-            friendlyName: wasteType,
-            daysTo,
-            dateText,
-            types: [wasteType],
-            icon: this._getWasteIcon(wasteType),
-            color: this._getWasteColor(wasteType),
-            isToday,
-            isTomorrow,
-            isAcknowledged,
-          });
+          if (isNaN(daysTo)) {
+            const parsedDate = parseDateString(stateObj.state);
+            if (parsedDate) {
+              daysTo = calculateDaysDifference(parsedDate, today);
+              dateText = stateObj.state.replace(/^on\s+\w+,\s+/i, '');
+            }
+          }
+
+          if (!isNaN(daysTo) && daysTo >= 0) {
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateText}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
+            list.push({
+              entityId,
+              friendlyName: wasteType,
+              daysTo,
+              dateText,
+              types: [wasteType],
+              icon: this._getWasteIcon(wasteType),
+              color: this._getWasteColor(wasteType),
+              isToday,
+              isTomorrow,
+              isAcknowledged,
+            });
+          }
         }
       }
     }

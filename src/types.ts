@@ -27,6 +27,7 @@ export interface WCSCardConfig {
   language?: string;
   max_items?: number;
   next_only?: boolean;
+  source_type?: 'sensor' | 'calendar';
 }
 
 export interface HassEntityAttributeBase {
@@ -75,6 +76,7 @@ export interface HomeAssistant {
     active_theme: string;
   };
   localize(key: string, ...args: any[]): string;
+  callWS<T = any>(msg: any): Promise<T>;
 }
 
 export interface WasteCollectionInfo {
