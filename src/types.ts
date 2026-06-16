@@ -89,4 +89,5 @@ export interface WasteCollectionInfo {
   isToday: boolean;
   isTomorrow: boolean;
   isAcknowledged: boolean;
+  ackKey: string;
 }

@@ -259,6 +259,7 @@ export class WasteCollectionScheduleCard extends LitElement {
               isToday,
               isTomorrow,
               isAcknowledged,
+              ackKey,
             });
             parsedAny = true;
           }
@@ -292,6 +293,7 @@ export class WasteCollectionScheduleCard extends LitElement {
                 isToday,
                 isTomorrow,
                 isAcknowledged,
+                ackKey,
               });
               parsedAny = true;
             }
@@ -333,6 +335,7 @@ export class WasteCollectionScheduleCard extends LitElement {
               isToday,
               isTomorrow,
               isAcknowledged,
+              ackKey,
             });
           }
         }
@@ -365,8 +368,7 @@ export class WasteCollectionScheduleCard extends LitElement {
     if (!this.config.hide_on_click) return;
     if (!item.isToday && !item.isTomorrow) return;
 
-    const ackKey = `wcs_ack_${item.entityId}_${item.types[0] || item.friendlyName}_${item.dateText}`;
-    localStorage.setItem(ackKey, 'true');
+    localStorage.setItem(item.ackKey, 'true');
     this.requestUpdate();
   }
 
@@ -391,6 +393,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           isToday: true,
           isTomorrow: false,
           isAcknowledged: false,
+          ackKey: '',
         },
         {
           entityId: 'stub.paper',
@@ -403,6 +406,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           isToday: false,
           isTomorrow: true,
           isAcknowledged: false,
+          ackKey: '',
         },
         {
           entityId: 'stub.rest',
@@ -415,6 +419,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           isToday: false,
           isTomorrow: false,
           isAcknowledged: false,
+          ackKey: '',
         }
       ];
     }
