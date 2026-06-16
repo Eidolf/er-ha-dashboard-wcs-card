@@ -41,6 +41,16 @@ function parseDateString(str: string): Date | null {
   return null;
 }
 
+function formatDate(date: Date, format: string): string {
+  const yyyy = String(date.getFullYear());
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  if (format === 'YYYY-MM-DD') {
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  return `${dd}.${mm}.${yyyy}`;
+}
+
 function calculateDaysDifference(targetDate: Date, currentDate: Date): number {
   const d1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
   const d2 = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -96,6 +106,7 @@ export class WasteCollectionScheduleCard extends LitElement {
       icon_color: 'var(--primary-text-color)',
       next_only: true,
       max_items: 5,
+      date_format: 'DD.MM.YYYY',
       ...config
     };
   }
@@ -220,56 +231,28 @@ export class WasteCollectionScheduleCard extends LitElement {
 
       let parsedAny = false;
 
-      // 1. Check if the entity contains multiple wastes in `wastes` array attribute
-      if (attrs.wastes && Array.isArray(attrs.wastes)) {
-        for (const wasteItem of attrs.wastes) {
-          const daysTo = Number(wasteItem.daysTo);
-          if (isNaN(daysTo)) continue;
+        // 1. Check if the entity contains multiple wastes in `wastes` array attribute
+        if (attrs.wastes && Array.isArray(attrs.wastes)) {
+          for (const wasteItem of attrs.wastes) {
+            const daysTo = Number(wasteItem.daysTo);
+            if (isNaN(daysTo)) continue;
 
-          const dateStr = wasteItem.date;
-          const wasteType = cleanWasteName(wasteItem.type || friendlyName);
-          
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+            const dateStr = wasteItem.date;
+            const wasteType = cleanWasteName(wasteItem.type || friendlyName);
+            
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
 
-          list.push({
-            entityId,
-            friendlyName: wasteType,
-            daysTo,
-            dateText: dateStr,
-            types: [wasteType],
-            icon: this._getWasteIcon(wasteType),
-            color: this._getWasteColor(wasteType),
-            isToday,
-            isTomorrow,
-            isAcknowledged,
-          });
-          parsedAny = true;
-        }
-      }
+            const parsedDate = parseDateString(dateStr);
+            const displayDate = parsedDate ? formatDate(parsedDate, this.config.date_format || 'DD.MM.YYYY') : dateStr;
 
-      // 2. Scan all attribute keys for dates (e.g. "2026-06-17": "Biotonne")
-      for (const [key, val] of Object.entries(attrs)) {
-        const parsedDate = parseDateString(key);
-        if (parsedDate) {
-          const daysTo = calculateDaysDifference(parsedDate, today);
-          if (daysTo < 0) continue; // Skip past collections
-
-          const wasteType = cleanWasteName(String(val));
-          const dateStr = key;
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
-
-          if (!list.some(item => item.entityId === entityId && item.friendlyName === wasteType && item.dateText === dateStr)) {
             list.push({
               entityId,
               friendlyName: wasteType,
               daysTo,
-              dateText: dateStr,
+              dateText: displayDate,
               types: [wasteType],
               icon: this._getWasteIcon(wasteType),
               color: this._getWasteColor(wasteType),
@@ -280,43 +263,79 @@ export class WasteCollectionScheduleCard extends LitElement {
             parsedAny = true;
           }
         }
-      }
 
-      // 3. Fallback: Parse state itself
-      if (!parsedAny) {
-        let daysTo = Number(stateObj.state);
-        let dateText = attrs.dateText || '';
-        let wasteType = friendlyName;
-
-        // If not a number, try parsing state as a date string (e.g. "on Wed, 17.06.2026")
-        if (isNaN(daysTo)) {
-          const parsedDate = parseDateString(stateObj.state);
+        // 2. Scan all attribute keys for dates (e.g. "2026-06-17": "Biotonne")
+        for (const [key, val] of Object.entries(attrs)) {
+          const parsedDate = parseDateString(key);
           if (parsedDate) {
-            daysTo = calculateDaysDifference(parsedDate, today);
-            dateText = stateObj.state.replace(/^on\s+\w+,\s+/i, ''); // clean prefix like "on Wed, "
+            const daysTo = calculateDaysDifference(parsedDate, today);
+            if (daysTo < 0) continue; // Skip past collections
+
+            const wasteType = cleanWasteName(String(val));
+            const dateStr = key;
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateStr}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
+            const displayDate = formatDate(parsedDate, this.config.date_format || 'DD.MM.YYYY');
+
+            if (!list.some(item => item.entityId === entityId && item.friendlyName === wasteType && item.dateText === displayDate)) {
+              list.push({
+                entityId,
+                friendlyName: wasteType,
+                daysTo,
+                dateText: displayDate,
+                types: [wasteType],
+                icon: this._getWasteIcon(wasteType),
+                color: this._getWasteColor(wasteType),
+                isToday,
+                isTomorrow,
+                isAcknowledged,
+              });
+              parsedAny = true;
+            }
           }
         }
 
-        if (!isNaN(daysTo) && daysTo >= 0) {
-          const isToday = daysTo === 0;
-          const isTomorrow = daysTo === 1;
-          const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateText}`;
-          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+        // 3. Fallback: Parse state itself
+        if (!parsedAny) {
+          let daysTo = Number(stateObj.state);
+          let dateText = attrs.dateText || '';
+          let wasteType = friendlyName;
 
-          list.push({
-            entityId,
-            friendlyName: wasteType,
-            daysTo,
-            dateText,
-            types: [wasteType],
-            icon: this._getWasteIcon(wasteType),
-            color: this._getWasteColor(wasteType),
-            isToday,
-            isTomorrow,
-            isAcknowledged,
-          });
+          // If not a number, try parsing state as a date string (e.g. "on Wed, 17.06.2026")
+          if (isNaN(daysTo)) {
+            const parsedDate = parseDateString(stateObj.state);
+            if (parsedDate) {
+              daysTo = calculateDaysDifference(parsedDate, today);
+              dateText = stateObj.state.replace(/^on\s+\w+,\s+/i, ''); // clean prefix like "on Wed, "
+            }
+          }
+
+          if (!isNaN(daysTo) && daysTo >= 0) {
+            const isToday = daysTo === 0;
+            const isTomorrow = daysTo === 1;
+            const ackKey = `wcs_ack_${entityId}_${wasteType}_${dateText}`;
+            const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+
+            const parsedDate = parseDateString(dateText);
+            const displayDate = parsedDate ? formatDate(parsedDate, this.config.date_format || 'DD.MM.YYYY') : dateText;
+
+            list.push({
+              entityId,
+              friendlyName: wasteType,
+              daysTo,
+              dateText: displayDate,
+              types: [wasteType],
+              icon: this._getWasteIcon(wasteType),
+              color: this._getWasteColor(wasteType),
+              isToday,
+              isTomorrow,
+              isAcknowledged,
+            });
+          }
         }
-      }
     }
 
     // Sort by days remaining
@@ -365,7 +384,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           entityId: 'stub.bio',
           friendlyName: 'Biotonne',
           daysTo: 0,
-          dateText: new Date().toLocaleDateString(lang),
+          dateText: formatDate(new Date(), this.config.date_format || 'DD.MM.YYYY'),
           types: ['Bio'],
           icon: 'mdi:leaf',
           color: '#4caf50',
@@ -377,7 +396,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           entityId: 'stub.paper',
           friendlyName: 'Altpapier',
           daysTo: 1,
-          dateText: new Date(Date.now() + 86400000).toLocaleDateString(lang),
+          dateText: formatDate(new Date(Date.now() + 86400000), this.config.date_format || 'DD.MM.YYYY'),
           types: ['Papier'],
           icon: 'mdi:package-variant',
           color: '#2196f3',
@@ -389,7 +408,7 @@ export class WasteCollectionScheduleCard extends LitElement {
           entityId: 'stub.rest',
           friendlyName: 'Restmüll',
           daysTo: 5,
-          dateText: new Date(Date.now() + 5 * 86400000).toLocaleDateString(lang),
+          dateText: formatDate(new Date(Date.now() + 5 * 86400000), this.config.date_format || 'DD.MM.YYYY'),
           types: ['Restmüll'],
           icon: 'mdi:trash-can',
           color: '#707070',

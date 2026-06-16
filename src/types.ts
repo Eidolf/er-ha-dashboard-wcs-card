@@ -27,6 +27,7 @@ export interface WCSCardConfig {
   language?: string;
   max_items?: number;
   next_only?: boolean;
+  date_format?: 'DD.MM.YYYY' | 'YYYY-MM-DD';
 }
 
 export interface HassEntityAttributeBase {

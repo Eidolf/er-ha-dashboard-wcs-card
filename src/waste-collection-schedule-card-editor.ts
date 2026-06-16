@@ -48,6 +48,10 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
     return this._config?.layout || 'card';
   }
 
+  get _date_format(): string {
+    return this._config?.date_format || 'DD.MM.YYYY';
+  }
+
   get _hide_before(): number {
     return this._config?.hide_before ?? -1;
   }
@@ -211,6 +215,24 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
               { label: localize('editor.layout_card', '', '', lang), value: 'card' },
               { label: localize('editor.layout_row', '', '', lang), value: 'row' },
               { label: localize('editor.layout_grid', '', '', lang), value: 'grid' }
+            ]}"
+            @selected="${this._valueChanged}"
+            @change="${this._valueChanged}"
+            @value-changed="${this._valueChanged}"
+            @closed="${(ev: Event) => ev.stopPropagation()}"
+          >
+          </ha-select>
+        </div>
+
+        <!-- Date Format -->
+        <div class="section-title">${localize('editor.date_format', '', '', lang)}</div>
+        <div class="option">
+          <ha-select
+            .value="${this._date_format}"
+            .configValue="${'date_format'}"
+            .options="${[
+              { label: 'DD.MM.YYYY (z.B. 15.06.2026)', value: 'DD.MM.YYYY' },
+              { label: 'YYYY-MM-DD (z.B. 2026-06-15)', value: 'YYYY-MM-DD' }
             ]}"
             @selected="${this._valueChanged}"
             @change="${this._valueChanged}"
