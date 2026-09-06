@@ -34,6 +34,30 @@ export const styles = css`
     color: var(--wcs-text-primary);
     margin-bottom: 12px;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .wcs-offline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: normal;
+    color: var(--wcs-text-secondary);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 2px 8px;
+  }
+
+  .wcs-offline-badge ha-icon {
+    --mdc-icon-size: 13px;
+    width: 13px;
+    height: 13px;
+    color: #ff9800;
   }
 
   .wcs-container {

@@ -1,6 +1,6 @@
 {
   "name": "er-ha-dashboard-wcs-card",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "A modern Home Assistant Lovelace card for Waste Collection Schedule",
   "type": "module",
   "main": "dist/waste-collection-schedule-card.js",

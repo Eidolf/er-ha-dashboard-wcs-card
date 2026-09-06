@@ -62,8 +62,22 @@ This card is designed to integrate seamlessly with the popular [HACS Waste Colle
 | `hide_date` | Boolean | `false` | Hide the absolute date text. |
 | `hide_days` | Boolean | `false` | Hide the relative day countdown badges. |
 | `hide_icon` | Boolean | `false` | Hide the waste type icons. |
+| `date_format` | String | `DD.MM.YYYY` | Date format: `DD.MM.YYYY` or `YYYY-MM-DD`. |
+| `enable_cache` | Boolean | `true` | Enables a 14-day local offline cache as fallback if calendar integration fails. |
+| `max_items` | Number | `5` | Maximum number of upcoming appointments to show. |
+| `next_only` | Boolean | `true` | Only display the single next upcoming date per waste type. |
 
 ---
+
+## 🔄 Offline Resilience & Cache
+
+If your municipal waste provider's website has an outage or responds with an HTTP 500 error, Home Assistant entities often transition to `unavailable` or empty states.
+With **Offline Cache** enabled (enabled by default):
+- The card continuously keeps a 14-day snapshot of future collection dates in your browser's local cache.
+- When an outage occurs, the card automatically falls back to the cached schedule.
+- Days remaining are recomputed relative to today's date so counts remain accurate.
+- An `Offline` badge appears in the card title showing the snapshot date.
+- As soon as the integration recovers, live data immediately takes precedence.
 
 ## Examples
 

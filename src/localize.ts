@@ -29,6 +29,8 @@ const languages: Record<string, Record<string, string>> = {
     'editor.max_items': 'Maximum items to display (Default: 5)',
     'editor.next_only': 'Only show the next upcoming collection per waste type',
     'editor.date_format': 'Date Format',
+    'editor.enable_cache': 'Offline Cache (Fallback when server/integration is offline)',
+    'card.offline_notice': 'Offline Cache Stand: {date}',
   },
   de: {
     'state.today': 'Heute',
@@ -60,6 +62,8 @@ const languages: Record<string, Record<string, string>> = {
     'editor.max_items': 'Maximale Anzahl an Terminen (Standard: 5)',
     'editor.next_only': 'Nur den nächsten Termin pro Müllsorte anzeigen',
     'editor.date_format': 'Datumsformat',
+    'editor.enable_cache': 'Offline-Cache (Fallback wenn Server/Integration offline ist)',
+    'card.offline_notice': 'Offline-Cache Stand: {date}',
   }
 };
 

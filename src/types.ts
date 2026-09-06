@@ -28,6 +28,18 @@ export interface WCSCardConfig {
   max_items?: number;
   next_only?: boolean;
   date_format?: 'DD.MM.YYYY' | 'YYYY-MM-DD';
+  enable_cache?: boolean;
+}
+
+export interface CachedWasteEntry {
+  entityId: string;
+  wasteType: string;
+  dateStr: string; // ISO or parseable date string
+}
+
+export interface CardCachePayload {
+  timestamp: number;
+  entries: CachedWasteEntry[];
 }
 
 export interface HassEntityAttributeBase {

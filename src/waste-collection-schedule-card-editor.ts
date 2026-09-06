@@ -367,6 +367,14 @@ export class WasteCollectionScheduleCardEditor extends LitElement {
               @change="${this._toggleChanged}"
             ></ha-switch>
           </ha-formfield>
+
+          <ha-formfield .label="${localize('editor.enable_cache', '', '', lang)}">
+            <ha-switch
+              .checked="${this._config?.enable_cache !== false}"
+              .configValue="${'enable_cache'}"
+              @change="${this._toggleChanged}"
+            ></ha-switch>
+          </ha-formfield>
         </div>
       </div>
     `;

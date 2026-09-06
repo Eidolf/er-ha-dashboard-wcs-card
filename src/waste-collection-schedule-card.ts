@@ -1,6 +1,6 @@
 import { LitElement, html, TemplateResult, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { WCSCardConfig, HomeAssistant, WasteCollectionInfo, HassEntity } from './types';
+import { WCSCardConfig, HomeAssistant, WasteCollectionInfo, HassEntity, CardCachePayload, CachedWasteEntry } from './types';
 import { styles } from './styles';
 import { localize } from './localize';
 
@@ -68,6 +68,8 @@ function cleanWasteName(name: string): string {
 export class WasteCollectionScheduleCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: WCSCardConfig;
+  @state() private _isUsingOfflineCache = false;
+  @state() private _cacheTimestamp: number | null = null;
 
   public static get styles() {
     return styles;
@@ -107,6 +109,7 @@ export class WasteCollectionScheduleCard extends LitElement {
       next_only: true,
       max_items: 5,
       date_format: 'DD.MM.YYYY',
+      enable_cache: true,
       ...config
     };
   }
@@ -217,14 +220,60 @@ export class WasteCollectionScheduleCard extends LitElement {
     return this.config.icon_color || 'var(--primary-text-color)';
   }
 
+  private _getCacheKey(): string {
+    const sortedEntities = [...this._getEntities()].sort().join(',');
+    return `wcs_cache_${sortedEntities}`;
+  }
+
+  private _saveCache(entries: CachedWasteEntry[]): void {
+    if (this.config.enable_cache === false || entries.length === 0) return;
+    try {
+      const payload: CardCachePayload = {
+        timestamp: Date.now(),
+        entries
+      };
+      localStorage.setItem(this._getCacheKey(), JSON.stringify(payload));
+    } catch {
+      // Ignore localStorage quotas or write errors
+    }
+  }
+
+  private _loadCache(): CardCachePayload | null {
+    if (this.config.enable_cache === false) return null;
+    try {
+      const raw = localStorage.getItem(this._getCacheKey());
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as CardCachePayload;
+      if (!parsed || !Array.isArray(parsed.entries)) return null;
+      // 14 days maximum lifespan (14 * 24 * 60 * 60 * 1000 ms = 1,209,600,000 ms)
+      const MAX_CACHE_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+      if (Date.now() - parsed.timestamp > MAX_CACHE_AGE_MS) {
+        localStorage.removeItem(this._getCacheKey());
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
   private _parseEntities(): WasteCollectionInfo[] {
     const list: WasteCollectionInfo[] = [];
+    const cacheEntriesToSave: CachedWasteEntry[] = [];
     const entities = this._getEntities();
     const today = new Date();
+
+    let hasAnyValidLiveEntity = false;
 
     for (const entityId of entities) {
       const stateObj = this.hass.states[entityId] as HassEntity | undefined;
       if (!stateObj) continue;
+
+      // Check if entity is unavailable or in error
+      const stateVal = String(stateObj.state || '').toLowerCase();
+      if (stateVal === 'unavailable' || stateVal === 'unknown') {
+        continue;
+      }
 
       const attrs = stateObj.attributes;
       const friendlyName = cleanWasteName(attrs.friendly_name || entityId.split('.').pop() || 'Müll');
@@ -261,6 +310,7 @@ export class WasteCollectionScheduleCard extends LitElement {
               isAcknowledged,
               ackKey,
             });
+            cacheEntriesToSave.push({ entityId, wasteType, dateStr });
             parsedAny = true;
           }
         }
@@ -295,6 +345,7 @@ export class WasteCollectionScheduleCard extends LitElement {
                 isAcknowledged,
                 ackKey,
               });
+              cacheEntriesToSave.push({ entityId, wasteType, dateStr });
               parsedAny = true;
             }
           }
@@ -337,8 +388,63 @@ export class WasteCollectionScheduleCard extends LitElement {
               isAcknowledged,
               ackKey,
             });
+            if (dateText) {
+              cacheEntriesToSave.push({ entityId, wasteType, dateStr: dateText });
+            }
+            parsedAny = true;
           }
         }
+
+        if (parsedAny) {
+          hasAnyValidLiveEntity = true;
+        }
+    }
+
+    // If we received live data, update cache and reset offline mode
+    if (hasAnyValidLiveEntity && list.length > 0) {
+      this._saveCache(cacheEntriesToSave);
+      this._isUsingOfflineCache = false;
+      this._cacheTimestamp = null;
+    } else if (entities.length > 0) {
+      // Live entities failed or are unavailable: Attempt offline cache fallback
+      const cached = this._loadCache();
+      if (cached && cached.entries.length > 0) {
+        this._isUsingOfflineCache = true;
+        this._cacheTimestamp = cached.timestamp;
+
+        for (const entry of cached.entries) {
+          const parsedDate = parseDateString(entry.dateStr);
+          if (!parsedDate) continue;
+
+          const daysTo = calculateDaysDifference(parsedDate, today);
+          if (daysTo < 0) continue; // Termine in the past are excluded
+
+          const isToday = daysTo === 0;
+          const isTomorrow = daysTo === 1;
+          const ackKey = `wcs_ack_${entry.entityId}_${entry.wasteType}_${entry.dateStr}`;
+          const isAcknowledged = localStorage.getItem(ackKey) === 'true';
+          const displayDate = formatDate(parsedDate, this.config.date_format || 'DD.MM.YYYY');
+
+          if (!list.some(item => item.entityId === entry.entityId && item.friendlyName === entry.wasteType && item.dateText === displayDate)) {
+            list.push({
+              entityId: entry.entityId,
+              friendlyName: entry.wasteType,
+              daysTo,
+              dateText: displayDate,
+              types: [entry.wasteType],
+              icon: this._getWasteIcon(entry.wasteType),
+              color: this._getWasteColor(entry.wasteType),
+              isToday,
+              isTomorrow,
+              isAcknowledged,
+              ackKey,
+            });
+          }
+        }
+      } else {
+        this._isUsingOfflineCache = false;
+        this._cacheTimestamp = null;
+      }
     }
 
     // Sort by days remaining
@@ -451,10 +557,27 @@ export class WasteCollectionScheduleCard extends LitElement {
         ${!this.config.hide_title && this.config.title
           ? html`
               <div class="wcs-header" style="${this.config.title_size ? `font-size: ${this.config.title_size};` : ''}">
-                ${this.config.title}
+                <span>${this.config.title}</span>
+                ${this._isUsingOfflineCache && this._cacheTimestamp
+                  ? html`
+                      <span class="wcs-offline-badge" title="${localize('card.offline_notice', '{date}', formatDate(new Date(this._cacheTimestamp), this.config.date_format || 'DD.MM.YYYY'), lang)}">
+                        <ha-icon icon="mdi:cloud-off-outline"></ha-icon>
+                        Offline
+                      </span>
+                    `
+                  : ''}
               </div>
             `
-          : ''}
+          : (this._isUsingOfflineCache && this._cacheTimestamp
+              ? html`
+                  <div class="wcs-header" style="justify-content: flex-end; margin-bottom: 8px;">
+                    <span class="wcs-offline-badge" title="${localize('card.offline_notice', '{date}', formatDate(new Date(this._cacheTimestamp), this.config.date_format || 'DD.MM.YYYY'), lang)}">
+                      <ha-icon icon="mdi:cloud-off-outline"></ha-icon>
+                      Offline
+                    </span>
+                  </div>
+                `
+              : '')}
 
         <div class="wcs-container ${this.config.layout ? `layout-${this.config.layout}` : ''}">
           ${filteredItems.map(item => this._renderItem(item, lang))}
